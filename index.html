@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Happy Birthday! - Preview</title>
+    <title>Happy Birthday!</title>
 
     <style>
         * {
@@ -16,6 +16,7 @@
         body {
             min-height: 100vh;
             font-family: Arial, Helvetica, sans-serif;
+            overflow: hidden;
 
             background: radial-gradient(circle at 30% 20%, #4a9b8e 0%, #2d6e7e 35%, #1a3f5c 70%, #0f2a44 100%);
 
@@ -30,7 +31,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            padding: 100px 30px 30px;
+            padding: 30px;
         }
 
         .logo {
@@ -60,15 +61,15 @@
         }
 
         .photo {
-            width: min(460px, 40vw);
-            height: min(460px, 40vw);
-            min-width: 260px;
-            min-height: 260px;
+            width: min(380px, 34vw);
+            height: min(380px, 34vw);
+            min-width: 220px;
+            min-height: 220px;
 
             object-fit: cover;
-            
+
             border-radius: 50%;
-            border: 12px solid white;
+            border: 10px solid white;
 
             box-shadow:
                 0 0 30px rgba(255,255,255,0.8),
@@ -106,63 +107,47 @@
             margin-top: 20px;
         }
 
-        /* Party poppers - continuously rising */
+        /* Balloons */
 
         .balloon {
-            position: fixed;
-            bottom: -120px;
-            font-size: 60px;
-            opacity: 0.95;
-            animation: floatUp linear infinite;
-            z-index: 5;
-            pointer-events: none;
+            position: absolute;
+            font-size: 70px;
+            animation: float 6s ease-in-out infinite;
         }
 
-        .balloon8  { left: 10%; font-size: 30px; animation-duration: 8s;  animation-delay: 1.5s; }
-        .balloon9  { left: 38%; font-size: 26px; animation-duration: 10s; animation-delay: 3.5s; }
-        .balloon10 { left: 58%; font-size: 32px; animation-duration: 7.5s; animation-delay: 2.2s; }
-        .balloon11 { left: 82%; font-size: 28px; animation-duration: 9.5s; animation-delay: 4.5s; }
-        .balloon12 { left: 95%; font-size: 30px; animation-duration: 8.5s; animation-delay: 0.8s; }
-
-        /* Party popper blast - repeating confetti burst across the whole screen */
-
-        .confetti-piece {
-            position: fixed;
-            top: 0;
-            left: var(--startX);
-            width: 10px;
-            height: 16px;
-            background: var(--pcolor);
-            opacity: 0;
-            z-index: 6;
-            pointer-events: none;
-            animation: blast 4s ease-out infinite;
-            animation-delay: var(--delay);
+        .balloon1 {
+            left: 5%;
+            top: 15%;
         }
 
-        @keyframes blast {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-                opacity: 1;
-            }
-            6% {
-                opacity: 1;
-            }
-            40% {
-                transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
-                opacity: 0;
-            }
-            100% {
-                transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
-                opacity: 0;
-            }
+        .balloon2 {
+            right: 5%;
+            top: 20%;
+            animation-delay: 1s;
+        }
+
+        .balloon3 {
+            left: 10%;
+            bottom: 10%;
+            animation-delay: 2s;
+        }
+
+        .balloon4 {
+            right: 10%;
+            bottom: 10%;
+            animation-delay: 3s;
         }
 
         /* Animations */
 
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
         }
 
         @keyframes glow {
@@ -171,6 +156,7 @@
                     0 0 20px rgba(255,255,255,0.6),
                     0 15px 40px rgba(0,0,0,0.3);
             }
+
             to {
                 box-shadow:
                     0 0 45px rgba(255,255,255,1),
@@ -178,31 +164,41 @@
             }
         }
 
-        @keyframes shine {
-            0% { background-position: 0% center; }
-            100% { background-position: 300% center; }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+
+            50% {
+                transform: translateY(-35px) rotate(5deg);
+            }
         }
 
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 0.95;
-            }
-            50% {
-                transform: translateY(-55vh) translateX(25px) rotate(8deg);
-            }
-            100% {
-                transform: translateY(-115vh) translateX(-20px) rotate(-6deg);
-                opacity: 0;
-            }
-        }
+        /* Small screens */
 
         @media (max-width: 600px) {
-            .container { padding: 80px 15px 15px; }
-            .logo { height: 36px; top: 12px; left: 16px; }
-            .photo { width: 260px; height: 260px; }
-            .message { padding: 15px; }
+            .container {
+                padding: 15px;
+            }
 
+            .logo {
+                height: 40px;
+                top: 12px;
+                left: 16px;
+            }
+
+            .photo {
+                width: 220px;
+                height: 220px;
+            }
+
+            .message {
+                padding: 15px;
+            }
+
+            .balloon {
+                font-size: 40px;
+            }
         }
     </style>
 </head>
@@ -216,52 +212,11 @@
             <img src="TLE-Logo.jpg" alt="TLE Technologies">
         </div>
 
-        <!-- Party popper blast (repeating confetti burst across the whole screen) -->
-        <div class="confetti-piece" style="--startX:2%;  --pcolor:#ff5c8a; --dx:180px; --dy:260px; --rot:280deg; --delay:0s;"></div>
-        <div class="confetti-piece" style="--startX:2%;  --pcolor:#ffd166; --dx:260px; --dy:200px; --rot:340deg; --delay:0.05s;"></div>
-        <div class="confetti-piece" style="--startX:4%;  --pcolor:#6bcbff; --dx:220px; --dy:340px; --rot:200deg; --delay:0.1s;"></div>
-        <div class="confetti-piece" style="--startX:3%;  --pcolor:#a06bff; --dx:120px; --dy:180px; --rot:150deg; --delay:0.15s;"></div>
-        <div class="confetti-piece" style="--startX:5%;  --pcolor:#7ee787; --dx:300px; --dy:280px; --rot:400deg; --delay:0.02s;"></div>
-        <div class="confetti-piece" style="--startX:1%;  --pcolor:#ff9d5c; --dx:160px; --dy:320px; --rot:90deg;  --delay:0.12s;"></div>
-        <div class="confetti-piece" style="--startX:6%;  --pcolor:#ff5c5c; --dx:240px; --dy:150px; --rot:250deg; --delay:0.08s;"></div>
-        <div class="confetti-piece" style="--startX:3%;  --pcolor:#ffd166; --dx:100px; --dy:300px; --rot:180deg; --delay:0.18s;"></div>
-
-        <div class="confetti-piece" style="--startX:98%; --pcolor:#ff5c8a; --dx:-180px; --dy:260px; --rot:-280deg; --delay:0s;"></div>
-        <div class="confetti-piece" style="--startX:98%; --pcolor:#6bcbff; --dx:-260px; --dy:200px; --rot:-340deg; --delay:0.05s;"></div>
-        <div class="confetti-piece" style="--startX:96%; --pcolor:#ffd166; --dx:-220px; --dy:340px; --rot:-200deg; --delay:0.1s;"></div>
-        <div class="confetti-piece" style="--startX:97%; --pcolor:#7ee787; --dx:-120px; --dy:180px; --rot:-150deg; --delay:0.15s;"></div>
-        <div class="confetti-piece" style="--startX:95%; --pcolor:#a06bff; --dx:-300px; --dy:280px; --rot:-400deg; --delay:0.02s;"></div>
-        <div class="confetti-piece" style="--startX:99%; --pcolor:#ff5c5c; --dx:-160px; --dy:320px; --rot:-90deg;  --delay:0.12s;"></div>
-        <div class="confetti-piece" style="--startX:94%; --pcolor:#ff9d5c; --dx:-240px; --dy:150px; --rot:-250deg; --delay:0.08s;"></div>
-        <div class="confetti-piece" style="--startX:97%; --pcolor:#ffd166; --dx:-100px; --dy:300px; --rot:-180deg; --delay:0.18s;"></div>
-
-        <div class="confetti-piece" style="--startX:12%; --pcolor:#ff9d5c; --dx:80px;  --dy:520px; --rot:220deg; --delay:0.06s;"></div>
-        <div class="confetti-piece" style="--startX:20%; --pcolor:#6bcbff; --dx:-60px; --dy:600px; --rot:-260deg; --delay:0.14s;"></div>
-        <div class="confetti-piece" style="--startX:28%; --pcolor:#ff5c8a; --dx:100px; --dy:540px; --rot:300deg; --delay:0.09s;"></div>
-        <div class="confetti-piece" style="--startX:36%; --pcolor:#7ee787; --dx:-90px; --dy:580px; --rot:-180deg; --delay:0.2s;"></div>
-        <div class="confetti-piece" style="--startX:44%; --pcolor:#ffd166; --dx:70px;  --dy:520px; --rot:240deg; --delay:0.03s;"></div>
-        <div class="confetti-piece" style="--startX:52%; --pcolor:#a06bff; --dx:-80px; --dy:600px; --rot:-320deg; --delay:0.17s;"></div>
-        <div class="confetti-piece" style="--startX:60%; --pcolor:#ff5c5c; --dx:90px;  --dy:540px; --rot:200deg; --delay:0.11s;"></div>
-        <div class="confetti-piece" style="--startX:68%; --pcolor:#6bcbff; --dx:-70px; --dy:580px; --rot:-240deg; --delay:0.04s;"></div>
-        <div class="confetti-piece" style="--startX:76%; --pcolor:#ffd166; --dx:80px;  --dy:520px; --rot:280deg; --delay:0.19s;"></div>
-        <div class="confetti-piece" style="--startX:84%; --pcolor:#ff9d5c; --dx:-90px; --dy:600px; --rot:-200deg; --delay:0.07s;"></div>
-        <div class="confetti-piece" style="--startX:16%; --pcolor:#a06bff; --dx:110px; --dy:460px; --rot:260deg; --delay:0.22s;"></div>
-        <div class="confetti-piece" style="--startX:24%; --pcolor:#ff5c5c; --dx:-100px;--dy:500px; --rot:-280deg; --delay:0.13s;"></div>
-        <div class="confetti-piece" style="--startX:32%; --pcolor:#7ee787; --dx:120px; --dy:470px; --rot:320deg; --delay:0.01s;"></div>
-        <div class="confetti-piece" style="--startX:40%; --pcolor:#ff5c8a; --dx:-110px;--dy:510px; --rot:-220deg; --delay:0.16s;"></div>
-        <div class="confetti-piece" style="--startX:48%; --pcolor:#ffd166; --dx:100px; --dy:480px; --rot:260deg; --delay:0.1s;"></div>
-        <div class="confetti-piece" style="--startX:56%; --pcolor:#6bcbff; --dx:-120px;--dy:520px; --rot:-300deg; --delay:0.21s;"></div>
-        <div class="confetti-piece" style="--startX:64%; --pcolor:#a06bff; --dx:90px;  --dy:490px; --rot:240deg; --delay:0.05s;"></div>
-        <div class="confetti-piece" style="--startX:72%; --pcolor:#ff9d5c; --dx:-100px;--dy:530px; --rot:-260deg; --delay:0.15s;"></div>
-        <div class="confetti-piece" style="--startX:80%; --pcolor:#ff5c5c; --dx:110px; --dy:470px; --rot:300deg; --delay:0.08s;"></div>
-        <div class="confetti-piece" style="--startX:88%; --pcolor:#7ee787; --dx:-90px; --dy:500px; --rot:-240deg; --delay:0.18s;"></div>
-
-        <!-- Small balloons -->
-        <div class="balloon balloon8">🎈</div>
-        <div class="balloon balloon9">🎈</div>
-        <div class="balloon balloon10">🎈</div>
-        <div class="balloon balloon11">🎈</div>
-        <div class="balloon balloon12">🎈</div>
+        <!-- Balloons -->
+        <div class="balloon balloon1">🎈</div>
+        <div class="balloon balloon2">🎈</div>
+        <div class="balloon balloon3">🎈</div>
+        <div class="balloon balloon4">🎈</div>
 
         <!-- Main Heading -->
         <div class="title">
@@ -272,10 +227,10 @@
             Wishing you a wonderful day!
         </div>
 
-        <!-- Employee Photo (placeholder - your real photo will replace this) -->
+        <!-- Employee Photo -->
         <img
             src="birthday-photo.jpg"
-            alt=""
+            alt="Birthday Employee"
             class="photo"
         >
 
@@ -285,7 +240,7 @@
         </div>
 
         <div class="department">
-            EFW Team
+           EFW Team
         </div>
 
         <!-- Birthday Message -->
@@ -297,6 +252,10 @@
             <br>
             We wish you great success, good health
             and happiness in the year ahead!
+        </div>
+
+        <div class="cake">
+            🎂 🎁 🎈 🎊 🎉
         </div>
 
     </div>
