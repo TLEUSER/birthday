@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Happy Birthday! - Preview</title>
 
@@ -23,6 +23,7 @@
             text-align: center;
         }
 
+        /* ensure main content stacks above confetti/balloons */
         .container {
             min-height: 100vh;
             display: flex;
@@ -31,6 +32,7 @@
             align-items: center;
             position: relative;
             padding: 100px 30px 30px;
+            z-index: 5; /* above confetti/balloons */
         }
 
         .logo {
@@ -38,11 +40,13 @@
             top: 20px;
             left: 30px;
             height: 60px;
+            z-index: 20; /* keep logo on top */
         }
 
         .logo img {
             height: 100%;
             object-fit: contain;
+            display: block;
         }
 
         .title {
@@ -59,29 +63,38 @@
             margin-bottom: 25px;
         }
 
-        .photo {
+        /* Photo wrapper: use wrapper to draw the white ring cleanly */
+        .photo-wrap {
             width: min(460px, 40vw);
             height: min(460px, 40vw);
             min-width: 260px;
             min-height: 260px;
 
-            object-fit: cover;
-
             border-radius: 50%;
-            border: 12px solid white;
-
+            padding: 12px;               /* thickness of the white ring */
+            background: white;          /* the ring color */
             box-shadow:
                 0 0 30px rgba(255,255,255,0.8),
                 0 15px 40px rgba(0,0,0,0.35);
-
-            animation: glow 2s infinite alternate;
             margin-bottom: 25px;
+            display: inline-block;
+            overflow: hidden;           /* crop the inner image to the circle */
+        }
+
+        .photo-inner {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 50%;
+            background-color: transparent;
         }
 
         .name {
             font-size: clamp(35px, 5vw, 70px);
             font-weight: bold;
             margin-bottom: 10px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.25);
         }
 
         .department {
@@ -99,6 +112,8 @@
             border-radius: 25px;
             backdrop-filter: blur(8px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 10; /* ensure this card is above confetti */
         }
 
         .cake {
@@ -107,14 +122,13 @@
         }
 
         /* Party poppers - continuously rising */
-
         .balloon {
             position: fixed;
             bottom: -120px;
             font-size: 60px;
             opacity: 0.95;
             animation: floatUp linear infinite;
-            z-index: 5;
+            z-index: 1; /* keep behind main content */
             pointer-events: none;
         }
 
@@ -125,7 +139,6 @@
         .balloon12 { left: 95%; font-size: 30px; animation-duration: 8.5s; animation-delay: 0.8s; }
 
         /* Party popper blast - repeating confetti burst across the whole screen */
-
         .confetti-piece {
             position: fixed;
             top: 0;
@@ -134,7 +147,7 @@
             height: 16px;
             background: var(--pcolor);
             opacity: 0;
-            z-index: 6;
+            z-index: 1; /* keep behind main content */
             pointer-events: none;
             animation: blast 4s ease-out infinite;
             animation-delay: var(--delay);
@@ -197,12 +210,17 @@
             }
         }
 
+        /* optional glow on wrapper (subtle pulsing) */
+        .photo-wrap {
+            animation: glow 2s infinite alternate;
+        }
+
         @media (max-width: 600px) {
             .container { padding: 80px 15px 15px; }
             .logo { height: 36px; top: 12px; left: 16px; }
-            .photo { width: 260px; height: 260px; }
+            .photo-wrap { width: 260px; height: 260px; }
+            .photo-inner { width: 100%; height: 100%; }
             .message { padding: 15px; }
-
         }
     </style>
 </head>
@@ -212,7 +230,7 @@
     <div class="container">
 
         <!-- Company Logo -->
-        <div class="logo">
+        <div class="logo" aria-hidden="true">
             <img src="TLE-Logo.jpg" alt="TLE Technologies">
         </div>
 
@@ -257,11 +275,11 @@
         <div class="confetti-piece" style="--startX:88%; --pcolor:#7ee787; --dx:-90px; --dy:500px; --rot:-240deg; --delay:0.18s;"></div>
 
         <!-- Small balloons -->
-        <div class="balloon balloon8">🎈</div>
-        <div class="balloon balloon9">🎈</div>
-        <div class="balloon balloon10">🎈</div>
-        <div class="balloon balloon11">🎈</div>
-        <div class="balloon balloon12">🎈</div>
+        <div class="balloon balloon8" aria-hidden="true">🎈</div>
+        <div class="balloon balloon9" aria-hidden="true">🎈</div>
+        <div class="balloon balloon10" aria-hidden="true">🎈</div>
+        <div class="balloon balloon11" aria-hidden="true">🎈</div>
+        <div class="balloon balloon12" aria-hidden="true">🎈</div>
 
         <!-- Main Heading -->
         <div class="title">
@@ -272,12 +290,10 @@
             Wishing you a wonderful day!
         </div>
 
-        <!-- Employee Photo (placeholder - your real photo will replace this) -->
-        <img
-            src="birthday-photo.jpg"
-            alt=""
-            class="photo"
-        >
+        <!-- Employee Photo (wrapper to avoid anti-alias gaps around the ring) -->
+        <div class="photo-wrap" aria-hidden="false">
+            <img src="birthday-photo.jpg" alt="Achyut's photo" class="photo-inner" />
+        </div>
 
         <!-- Employee Details -->
         <div class="name">
@@ -289,7 +305,7 @@
         </div>
 
         <!-- Birthday Message -->
-        <div class="message">
+        <div class="message" role="article" aria-label="Birthday message for Achyut">
             🎂 Wishing you a very Happy Birthday! 🎂
             <br><br>
             May your special day be filled with
