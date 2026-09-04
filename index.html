@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Happy Birthday!</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow: hidden;
+
+            background:
+                radial-gradient(circle at top left, #ff9a9e, transparent 35%),
+                radial-gradient(circle at bottom right, #fad0c4, transparent 35%),
+                linear-gradient(135deg, #6a11cb, #2575fc);
+
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 30px;
+        }
+
+        .title {
+            font-size: clamp(40px, 6vw, 90px);
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: bounce 2s infinite;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: clamp(20px, 3vw, 40px);
+            margin-bottom: 25px;
+        }
+
+        .photo {
+            width: min(300px, 30vw);
+            height: min(300px, 30vw);
+            min-width: 180px;
+            min-height: 180px;
+
+            object-fit: cover;
+
+            border-radius: 50%;
+            border: 10px solid white;
+
+            box-shadow:
+                0 0 30px rgba(255,255,255,0.8),
+                0 15px 40px rgba(0,0,0,0.35);
+
+            animation: glow 2s infinite alternate;
+            margin-bottom: 25px;
+        }
+
+        .name {
+            font-size: clamp(35px, 5vw, 70px);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .department {
+            font-size: clamp(18px, 2.5vw, 32px);
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+
+        .message {
+            max-width: 1000px;
+            font-size: clamp(20px, 2.5vw, 36px);
+            line-height: 1.5;
+            background: rgba(255,255,255,0.15);
+            padding: 20px 35px;
+            border-radius: 25px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .cake {
+            font-size: clamp(35px, 5vw, 65px);
+            margin-top: 20px;
+        }
+
+        /* Balloons */
+
+        .balloon {
+            position: absolute;
+            font-size: 70px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .balloon1 {
+            left: 5%;
+            top: 15%;
+        }
+
+        .balloon2 {
+            right: 5%;
+            top: 20%;
+            animation-delay: 1s;
+        }
+
+        .balloon3 {
+            left: 10%;
+            bottom: 10%;
+            animation-delay: 2s;
+        }
+
+        .balloon4 {
+            right: 10%;
+            bottom: 10%;
+            animation-delay: 3s;
+        }
+
+        /* Animations */
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow:
+                    0 0 20px rgba(255,255,255,0.6),
+                    0 15px 40px rgba(0,0,0,0.3);
+            }
+
+            to {
+                box-shadow:
+                    0 0 45px rgba(255,255,255,1),
+                    0 15px 40px rgba(0,0,0,0.3);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+
+            50% {
+                transform: translateY(-35px) rotate(5deg);
+            }
+        }
+
+        /* Small screens */
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .photo {
+                width: 200px;
+                height: 200px;
+            }
+
+            .message {
+                padding: 15px;
+            }
+
+            .balloon {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Balloons -->
+        <div class="balloon balloon1">🎈</div>
+        <div class="balloon balloon2">🎈</div>
+        <div class="balloon balloon3">🎈</div>
+        <div class="balloon balloon4">🎈</div>
+
+        <!-- Main Heading -->
+        <div class="title">
+            🎉 HAPPY BIRTHDAY! 🎉
+        </div>
+
+        <div class="subtitle">
+            Wishing you a wonderful day!
+        </div>
+
+        <!-- Employee Photo -->
+        <img
+            src="birthday-photo.jpg"
+            alt="Birthday Employee"
+            class="photo"
+        >
+
+        <!-- Employee Details -->
+        <div class="name">
+            John Doe
+        </div>
+
+        <div class="department">
+            Software Development Team
+        </div>
+
+        <!-- Birthday Message -->
+        <div class="message">
+            🎂 Wishing you a very Happy Birthday! 🎂
+            <br><br>
+            May your special day be filled with
+            happiness, laughter and wonderful memories.
+            <br>
+            We wish you great success, good health
+            and happiness in the year ahead!
+        </div>
+
+        <div class="cake">
+            🎂 🎁 🎈 🎊 🎉
+        </div>
+
+    </div>
+
+</body>
+</html>
