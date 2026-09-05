@@ -8,24 +8,26 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;min-width:100%;min-height:100%;overflow:hidden}
 body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;background:radial-gradient(circle at 30% 20%,#4a9b8e 0%,#2d6e7e 35%,#1a3f5c 70%,#0f2a44 100%)}
-.container{width:100vw;height:100vh;height:100dvh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(3px,.65vh,12px);position:relative;padding:clamp(10px,1.5vh,24px) clamp(10px,2.5vw,45px);z-index:5;overflow:hidden}
+.container{width:100vw;height:100vh;height:100dvh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(2px,.35vh,8px);position:relative;padding:clamp(6px,1vh,16px) clamp(8px,2vw,30px);z-index:5;overflow:hidden}
 .logo{position:fixed;top:clamp(12px,2vh,28px);left:clamp(14px,2vw,32px);height:clamp(34px,5vh,70px);max-width:22vw;z-index:20}
 .logo img{height:100%;max-width:100%;object-fit:contain;display:block}
 .title{font-size:clamp(28px,5.2vw,82px);font-weight:bold;line-height:1.05;text-shadow:0 5px 15px rgba(0,0,0,.3);animation:bounce 2s infinite}
 .subtitle{font-size:clamp(16px,2.4vw,34px);line-height:1.15}
 .date{font-size:clamp(14px,1.8vw,26px);font-weight:bold;line-height:1.1;opacity:.95}
 .photo-wrap{
-  width:min(58vw,58vh,680px);
-  height:min(58vw,58vh,680px);
-  min-width:220px;
-  min-height:220px;
-  border-radius:24px;
-  padding:clamp(6px,0.9vw,12px);
+  width:min(52vw,52vh,620px);
+  height:min(52vw,52vh,620px);
+  min-width:160px;
+  min-height:160px;
+  max-width:52vw;
+  max-height:52vh;
+  border-radius:20px;
+  padding:clamp(4px,.6vw,9px);
   background:#fff;
-  box-shadow:0 0 35px rgba(255,255,255,.85),0 15px 45px rgba(0,0,0,.4);
+  box-shadow:0 0 28px rgba(255,255,255,.85),0 12px 35px rgba(0,0,0,.4);
   overflow:hidden;
   animation:glow 2s infinite alternate;
-  flex:0 0 auto;
+  flex:0 1 auto;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -73,6 +75,21 @@ body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;backgro
 @media (max-height:700px){.container{gap:2px;padding-top:10px;padding-bottom:10px}.title{font-size:clamp(24px,4.5vw,58px)}.subtitle{font-size:clamp(13px,2vw,24px)}.date{font-size:clamp(12px,1.5vw,20px)}.photo-wrap{width:min(48vw,43vh,500px);height:min(48vw,43vh,500px)}.name{font-size:clamp(22px,3.8vw,48px)}.department{font-size:clamp(13px,1.8vw,22px)}.message{font-size:clamp(12px,1.45vw,20px);padding:7px 16px}}
 @media (max-width:600px){.container{padding:70px 12px 12px;justify-content:center}.logo{top:12px;left:14px;height:32px}.photo-wrap{width:min(88vw,42vh);height:min(88vw,42vh);min-width:180px;min-height:180px}.message{max-width:94vw}.title{font-size:clamp(26px,9vw,48px)}.name{font-size:clamp(24px,8vw,44px)}}
 </style>
+
+<style id="tv-auto-fit-final">
+html,body{width:100%;height:100%;overflow:hidden}
+*{box-sizing:border-box}
+@media (max-aspect-ratio: 4/3){
+  .photo-wrap{width:min(46vw,40vh,520px);height:min(46vw,40vh,520px)}
+}
+@media (max-height: 700px){
+  .photo-wrap{width:min(44vw,44vh,500px);height:min(44vw,44vh,500px)}
+}
+@media (min-aspect-ratio: 21/9){
+  .photo-wrap{width:min(46vw,60vh,620px);height:min(46vw,60vh,620px)}
+}
+</style>
+
 </head>
 <body>
 
@@ -284,6 +301,49 @@ function scheduleMidnightSync() {
   setTimeout(() => window.location.reload(), delay);
 }
 scheduleMidnightSync();
+
+
+// Display schedule:
+// 1) Today's birthday employee stays for 15 minutes.
+// 2) Upcoming birthdays rotate every 10 seconds.
+// 3) After the upcoming list, today's employee returns for another 15 minutes.
+(function startDisplaySchedule(){
+  const FIFTEEN_MIN = 15 * 60 * 1000;
+  const TEN_SEC = 10 * 1000;
+
+  function getQueue(){
+    if (typeof buildQueue === "function") return buildQueue();
+    if (typeof birthdayQueue === "function") return birthdayQueue();
+    return [];
+  }
+
+  function startUpcoming(){
+    const list = getQueue().filter(r => r !== current);
+    let i = 0;
+
+    function next(){
+      if (!list.length){
+        if (current) show(current, true);
+        setTimeout(startUpcoming, FIFTEEN_MIN);
+        return;
+      }
+
+      show(list[i], false);
+      i++;
+
+      if (i < list.length) {
+        setTimeout(next, TEN_SEC);
+      } else {
+        if (current) show(current, true);
+        setTimeout(startUpcoming, FIFTEEN_MIN);
+      }
+    }
+    next();
+  }
+
+  // Start with today's birthday for 15 minutes.
+  setTimeout(startUpcoming, FIFTEEN_MIN);
+})();
 
 </script>
 </body>
