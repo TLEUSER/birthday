@@ -15,10 +15,10 @@ body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;backgro
 .subtitle{font-size:clamp(16px,2.4vw,34px);line-height:1.15}
 .date{font-size:clamp(14px,1.8vw,26px);font-weight:bold;line-height:1.1;opacity:.95}
 .photo-wrap{
-  width:min(52vw,52vh,620px);
-  height:min(52vw,52vh,620px);
-  max-width:52vw;
-  max-height:52vh;
+  width:min(68vw,68vh,900px);
+  height:min(68vw,68vh,900px);
+  max-width:68vw;
+  max-height:68vh;
   min-width:160px;
   min-height:160px;
   border-radius:20px;
@@ -152,8 +152,8 @@ function fitPhotoFrameToImage() {
 
   // Keep the complete photo visible, but never let the frame exceed
   // the TV-safe area reserved for the photo.
-  const maxW = Math.min(window.innerWidth * 0.52, 620);
-  const maxH = Math.min(window.innerHeight * 0.52, 620);
+  const maxW = Math.min(window.innerWidth * 0.68, 900);
+  const maxH = Math.min(window.innerHeight * 0.68, 900);
 
   let width = maxW;
   let height = width / ratio;
@@ -251,8 +251,8 @@ function show(rec, isToday = false) {
       img.style.display = 'none';
       fb.style.display = 'flex';
       const frame = document.querySelector('.photo-wrap');
-      frame.style.width = 'min(52vw,52vh,620px)';
-      frame.style.height = 'min(52vw,52vh,620px)';
+      frame.style.width = 'min(68vw,68vh,900px)';
+      frame.style.height = 'min(68vw,68vh,900px)';
       return;
     }
 
@@ -275,49 +275,86 @@ function show(rec, isToday = false) {
 }
 
 function run() {
-  const now = new Date();
-  const currentMonth = now.getMonth() + 1;
-  const today = now.getDate();
-
-  const monthly = [...employees]
-    .filter(r => Number(r.month) === currentMonth)
-    .sort((a, b) =>
-      Number(a.day) - Number(b.day) ||
-      String(a.name).localeCompare(String(b.name))
+  const todayRecords = () => {
+    const now = new Date();
+    return employees.filter(r =>
+      Number(r.day) === now.getDate() &&
+      Number(r.month) === now.getMonth() + 1
     );
+  };
 
-  const todays = monthly.filter(r => Number(r.day) === today);
-  const upcoming = monthly.filter(r => Number(r.day) > today);
+  const upcomingRecords = () => {
+    const now = new Date();
+    return [...employees]
+      .filter(r =>
+        Number(r.month) === now.getMonth() + 1 &&
+        Number(r.day) > now.getDate()
+      )
+      .sort((a,b) =>
+        Number(a.day) - Number(b.day) ||
+        String(a.name).localeCompare(String(b.name))
+      );
+  };
 
-  // Current month's birthdays only.
-  // Today's birthdays first, then upcoming birthdays.
-  const queue = [
-    ...todays.map(r => ({r, isToday: true})),
-    ...upcoming.map(r => ({r, isToday: false}))
-  ];
+  let timer = null;
 
-  if (!queue.length) {
-    show({
-      name: 'No Upcoming Birthdays',
-      department: '',
-      day: '',
-      month: '',
-      photo: ''
-    }, false);
-    return;
+  function clearTimer() {
+    if (timer) clearTimeout(timer);
+    timer = null;
   }
 
-  let index = 0;
+  function cycle() {
+    clearTimer();
 
-  function displayNext() {
-    show(queue[index].r, queue[index].isToday);
-    index = (index + 1) % queue.length;
+    const today = todayRecords();
+    const upcoming = upcomingRecords();
+
+    if (today.length) {
+      // Today's birthday stays on screen for 15 minutes.
+      show(today[0], true);
+
+      timer = setTimeout(() => {
+        showUpcoming(upcoming);
+      }, 15 * 60 * 1000);
+    } else {
+      // No birthday today: show upcoming birthdays directly.
+      showUpcoming(upcoming);
+    }
   }
 
-  displayNext();
+  function showUpcoming(list) {
+    let index = 0;
 
-  // Change employee every 10 seconds.
-  setInterval(displayNext, 10000);
+    function next() {
+      if (index < list.length) {
+        show(list[index], false);
+        index++;
+        timer = setTimeout(next, 10000);
+        return;
+      }
+
+      const today = todayRecords();
+
+      if (today.length) {
+        // Return to today's birthday for another 15 minutes.
+        show(today[0], true);
+        timer = setTimeout(cycle, 15 * 60 * 1000);
+      } else {
+        show({
+          name: 'No Upcoming Birthdays',
+          department: '',
+          day: '',
+          month: '',
+          photo: ''
+        }, false);
+        timer = setTimeout(cycle, 10000);
+      }
+    }
+
+    next();
+  }
+
+  cycle();
 }
 
 // Start birthday display.
