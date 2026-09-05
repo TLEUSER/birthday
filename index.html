@@ -345,48 +345,6 @@ function scheduleMidnightSync() {
 scheduleMidnightSync();
 
 
-// Display schedule:
-// 1) Today's birthday employee stays for 15 minutes.
-// 2) Upcoming birthdays rotate every 10 seconds.
-// 3) After the upcoming list, today's employee returns for another 15 minutes.
-(function startDisplaySchedule(){
-  const FIFTEEN_MIN = 15 * 60 * 1000;
-  const TEN_SEC = 10 * 1000;
-
-  function getQueue(){
-    if (typeof buildQueue === "function") return buildQueue();
-    if (typeof birthdayQueue === "function") return birthdayQueue();
-    return [];
-  }
-
-  function startUpcoming(){
-    const list = getQueue().filter(r => r !== current);
-    let i = 0;
-
-    function next(){
-      if (!list.length){
-        if (current) show(current, true);
-        setTimeout(startUpcoming, FIFTEEN_MIN);
-        return;
-      }
-
-      show(list[i], false);
-      i++;
-
-      if (i < list.length) {
-        setTimeout(next, TEN_SEC);
-      } else {
-        if (current) show(current, true);
-        setTimeout(startUpcoming, FIFTEEN_MIN);
-      }
-    }
-    next();
-  }
-
-  // Start with today's birthday for 15 minutes.
-  setTimeout(startUpcoming, FIFTEEN_MIN);
-})();
-
 </script>
 </body>
 </html>
