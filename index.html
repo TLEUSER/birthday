@@ -3,247 +3,1507 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birthday TV Display - v3</title>
+<title>Birthday TV Display</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;min-width:100%;min-height:100%;overflow:hidden}
-body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;background:radial-gradient(circle at 30% 20%,#4a9b8e 0%,#2d6e7e 35%,#1a3f5c 70%,#0f2a44 100%)}
-.container{width:100vw;height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(2px,.45vh,8px);position:relative;padding:clamp(10px,1.2vh,18px) clamp(12px,3vw,50px);z-index:5;overflow:hidden}
-.logo{position:fixed;top:clamp(12px,2vh,28px);left:clamp(14px,2vw,32px);height:clamp(34px,5vh,70px);max-width:22vw;z-index:20}
-.logo img{height:100%;max-width:100%;object-fit:contain;display:block}
-.title{font-size:clamp(28px,5.2vw,82px);font-weight:bold;line-height:1.05;text-shadow:0 5px 15px rgba(0,0,0,.3);animation:bounce 2s infinite}
-.subtitle{font-size:clamp(16px,2.4vw,34px);line-height:1.15}
-.date{font-size:clamp(14px,1.8vw,26px);font-weight:bold;line-height:1.1;opacity:.95}
-.photo-wrap{width:min(42vw,46vh,520px);height:min(44vw,50vh,540px);min-width:170px;min-height:180px;border-radius:18px;padding:clamp(5px,.7vw,10px);background:#fff;box-shadow:0 0 30px rgba(255,255,255,.8),0 15px 40px rgba(0,0,0,.35);overflow:hidden;animation:glow 2s infinite alternate;flex:0 0 auto}
-.photo-inner{width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;background:#1f5b6d}
-.fallback{width:100%;height:100%;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:clamp(46px,8vw,130px);font-weight:bold;background:rgba(255,255,255,.18)}
-.name{max-width:90vw;font-size:clamp(26px,4.5vw,68px);font-weight:bold;line-height:1.05;text-shadow:0 4px 10px rgba(0,0,0,.25);overflow-wrap:anywhere}
-.department{font-size:clamp(15px,2.2vw,30px);line-height:1.1;opacity:.9}
-.message{max-width:min(1000px,88vw);font-size:clamp(14px,1.8vw,28px);line-height:1.3;background:rgba(255,255,255,.15);padding:clamp(8px,1.3vh,16px) clamp(14px,2vw,30px);border-radius:25px;backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
-.nav{display:none}
-.confetti-piece{position:fixed;top:0;left:var(--startX);width:10px;height:16px;background:var(--pcolor);opacity:0;z-index:1;pointer-events:none;animation:blast 4s ease-out infinite;animation-delay:var(--delay)}
-.balloon{position:fixed;bottom:-120px;font-size:60px;opacity:.95;animation:floatUp linear infinite;z-index:1;pointer-events:none}
-.blast{position:fixed;width:0;height:0;z-index:10;pointer-events:none}.blast span{position:absolute;left:0;top:0;width:8px;height:22px;border-radius:3px;background:var(--c);opacity:0;transform-origin:center bottom;animation:blastOut 2.8s ease-out infinite;animation-delay:var(--delay)}.blast.left{left:8%;top:52%}.blast.right{right:8%;top:52%}.blast.left span{--origin:1}.blast.right span{--origin:-1}
-@keyframes blast{0%{transform:translate(0,0) rotate(0deg);opacity:1}6%{opacity:1}40%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes glow{from{box-shadow:0 0 20px rgba(255,255,255,.6),0 15px 40px rgba(0,0,0,.3)}to{box-shadow:0 0 45px rgba(255,255,255,1),0 15px 40px rgba(0,0,0,.3)}}
-@keyframes floatUp{0%{transform:translateY(0) translateX(0) rotate(0);opacity:.95}50%{transform:translateY(-55vh) translateX(25px) rotate(8deg)}100%{transform:translateY(-115vh) translateX(-20px) rotate(-6deg);opacity:0}}
-@keyframes blastOut{0%{opacity:0;transform:translate(0,0) rotate(0deg) scale(.4)}8%,55%{opacity:1}100%{opacity:0;transform:translate(calc(var(--x) * var(--origin)),var(--y)) rotate(var(--r)) scale(1)}}
-@media (max-height:700px){.container{gap:2px;padding-top:10px;padding-bottom:10px}.title{font-size:clamp(24px,4.5vw,58px)}.subtitle{font-size:clamp(13px,2vw,24px)}.date{font-size:clamp(12px,1.5vw,20px)}.photo-wrap{width:min(38vw,40vh,420px);height:min(40vw,44vh,440px)}.name{font-size:clamp(22px,3.8vw,48px)}.department{font-size:clamp(13px,1.8vw,22px)}.message{font-size:clamp(12px,1.45vw,20px);padding:7px 16px}}
-@media (max-width:600px){.container{padding:70px 12px 12px;justify-content:center}.logo{top:12px;left:14px;height:32px}.photo-wrap{width:min(78vw,38vh);height:min(78vw,42vh);min-width:140px;min-height:160px}.message{max-width:94vw}.title{font-size:clamp(26px,9vw,48px)}.name{font-size:clamp(24px,8vw,44px)}}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  color:#fff;
+  text-align:center;
+  background:
+    radial-gradient(circle at 30% 20%,#4a9b8e 0%,#2d6e7e 35%,#1a3f5c 70%,#0f2a44 100%);
+}
+
+.container{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:20px;
+  position:relative;
+  z-index:5;
+}
+
+.logo{
+  position:fixed;
+  top:20px;
+  left:25px;
+  height:60px;
+  z-index:20;
+}
+
+.logo img{
+  height:100%;
+  max-width:200px;
+  object-fit:contain;
+}
+
+.title{
+  font-size:clamp(30px,5vw,80px);
+  font-weight:bold;
+  line-height:1.05;
+  text-shadow:0 5px 15px rgba(0,0,0,.3);
+  animation:bounce 2s infinite;
+}
+
+.subtitle{
+  font-size:clamp(18px,2.4vw,34px);
+}
+
+.date{
+  font-size:clamp(15px,1.8vw,26px);
+  font-weight:bold;
+}
+
+.photo-wrap{
+  width:min(42vw,55vh,520px);
+  height:min(42vw,55vh,520px);
+  min-width:220px;
+  min-height:220px;
+
+  background:#fff;
+  padding:8px;
+
+  border-radius:18px;
+
+  box-shadow:
+    0 0 35px rgba(255,255,255,.8),
+    0 18px 45px rgba(0,0,0,.35);
+
+  overflow:hidden;
+
+  animation:glow 2s infinite alternate;
+}
+
+.photo-inner{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  border-radius:12px;
+
+  display:none;
+  background:#1f5b6d;
+}
+
+.fallback{
+  width:100%;
+  height:100%;
+
+  border-radius:12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:clamp(60px,9vw,140px);
+  font-weight:bold;
+
+  background:rgba(255,255,255,.18);
+}
+
+.name{
+  max-width:90vw;
+
+  font-size:clamp(28px,4.5vw,68px);
+  font-weight:bold;
+
+  line-height:1.05;
+
+  text-shadow:0 4px 10px rgba(0,0,0,.25);
+}
+
+.department{
+  font-size:clamp(16px,2.2vw,30px);
+  opacity:.9;
+}
+
+.message{
+  max-width:min(1000px,90vw);
+
+  font-size:clamp(14px,1.8vw,28px);
+  line-height:1.3;
+
+  background:rgba(255,255,255,.15);
+
+  padding:12px 25px;
+
+  border-radius:25px;
+
+  backdrop-filter:blur(8px);
+
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.confetti{
+  position:fixed;
+  top:-20px;
+  width:10px;
+  height:18px;
+  opacity:.9;
+
+  animation:fall 4s linear infinite;
+
+  z-index:1;
+}
+
+.balloon{
+  position:fixed;
+  bottom:-100px;
+  font-size:50px;
+
+  animation:floatUp 10s linear infinite;
+
+  z-index:1;
+}
+
+@keyframes bounce{
+  0%,100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-8px);
+  }
+}
+
+@keyframes glow{
+  from{
+    box-shadow:
+      0 0 20px rgba(255,255,255,.6),
+      0 15px 40px rgba(0,0,0,.3);
+  }
+
+  to{
+    box-shadow:
+      0 0 45px rgba(255,255,255,1),
+      0 15px 40px rgba(0,0,0,.3);
+  }
+}
+
+@keyframes fall{
+  0%{
+    transform:translateY(-30px) rotate(0);
+  }
+
+  100%{
+    transform:translateY(110vh) rotate(360deg);
+  }
+}
+
+@keyframes floatUp{
+  0%{
+    transform:translateY(0);
+    opacity:.9;
+  }
+
+  100%{
+    transform:translateY(-120vh);
+    opacity:0;
+  }
+}
+
+@media(max-height:700px){
+
+  .container{
+    gap:6px;
+    padding:10px;
+  }
+
+  .logo{
+    top:10px;
+    left:15px;
+    height:40px;
+  }
+
+  .photo-wrap{
+    width:min(32vw,38vh,330px);
+    height:min(32vw,38vh,330px);
+    min-width:180px;
+    min-height:180px;
+  }
+
+  .title{
+    font-size:clamp(25px,4vw,55px);
+  }
+
+  .name{
+    font-size:clamp(24px,3.8vw,50px);
+  }
+
+  .message{
+    font-size:clamp(12px,1.5vw,20px);
+    padding:7px 15px;
+  }
+}
+
+@media(max-width:600px){
+
+  .container{
+    padding:60px 10px 10px;
+  }
+
+  .photo-wrap{
+    width:min(65vw,38vh);
+    height:min(65vw,38vh);
+  }
+
+  .title{
+    font-size:9vw;
+  }
+
+  .name{
+    font-size:8vw;
+  }
+}
 </style>
 </head>
+
 <body>
 
-<div class="confetti-piece" style="--startX:10%;top:8%;--pcolor:#ff5c8a;--dx:-180px;--dy:260px;--rot:25deg;--delay:0.0s"></div>
-<div class="confetti-piece" style="--startX:4%;top:15%;--pcolor:#ffd166;--dx:180px;--dy:300px;--rot:70deg;--delay:0.18s"></div>
-<div class="confetti-piece" style="--startX:2%;top:25%;--pcolor:#6bcbff;--dx:240px;--dy:230px;--rot:140deg;--delay:0.36s"></div>
-<div class="confetti-piece" style="--startX:8%;top:35%;--pcolor:#7ee081;--dx:190px;--dy:330px;--rot:210deg;--delay:0.54s"></div>
-<div class="confetti-piece" style="--startX:3%;top:50%;--pcolor:#c084fc;--dx:260px;--dy:270px;--rot:310deg;--delay:0.72s"></div>
-<div class="confetti-piece" style="--startX:7%;top:65%;--pcolor:#ff5c8a;--dx:200px;--dy:320px;--rot:80deg;--delay:0.8999999999999999s"></div>
-<div class="confetti-piece" style="--startX:4%;top:80%;--pcolor:#ffd166;--dx:240px;--dy:260px;--rot:160deg;--delay:0.0s"></div>
-<div class="confetti-piece" style="--startX:10%;top:92%;--pcolor:#6bcbff;--dx:-220px;--dy:300px;--rot:250deg;--delay:0.18s"></div>
-<div class="confetti-piece" style="--startX:92%;top:10%;--pcolor:#7ee081;--dx:-190px;--dy:280px;--rot:-25deg;--delay:0.36s"></div>
-<div class="confetti-piece" style="--startX:97%;top:22%;--pcolor:#c084fc;--dx:-250px;--dy:240px;--rot:-80deg;--delay:0.54s"></div>
-<div class="confetti-piece" style="--startX:94%;top:38%;--pcolor:#ff5c8a;--dx:-200px;--dy:330px;--rot:-140deg;--delay:0.72s"></div>
-<div class="confetti-piece" style="--startX:97%;top:55%;--pcolor:#ffd166;--dx:-260px;--dy:270px;--rot:-210deg;--delay:0.8999999999999999s"></div>
-<div class="confetti-piece" style="--startX:93%;top:72%;--pcolor:#6bcbff;--dx:-200px;--dy:320px;--rot:-310deg;--delay:0.0s"></div>
-<div class="confetti-piece" style="--startX:96%;top:88%;--pcolor:#7ee081;--dx:-230px;--dy:260px;--rot:-160deg;--delay:0.18s"></div><div class="blast left"><span style="--x:45px;--y:-80px;--r:-70deg;--delay:0.0s;--c:#ff5c8a"></span><span style="--x:69px;--y:-108px;--r:-54deg;--delay:0.07s;--c:#ffd166"></span><span style="--x:93px;--y:-136px;--r:-38deg;--delay:0.14s;--c:#6bcbff"></span><span style="--x:117px;--y:-164px;--r:-22deg;--delay:0.21000000000000002s;--c:#7ee081"></span><span style="--x:141px;--y:-192px;--r:-6deg;--delay:0.28s;--c:#c084fc"></span><span style="--x:165px;--y:-80px;--r:10deg;--delay:0.35000000000000003s;--c:#ff8c42"></span><span style="--x:189px;--y:-108px;--r:26deg;--delay:0.42000000000000004s;--c:#ffffff"></span><span style="--x:45px;--y:-136px;--r:42deg;--delay:0.49000000000000005s;--c:#ff5c8a"></span><span style="--x:69px;--y:-164px;--r:58deg;--delay:0.56s;--c:#ffd166"></span><span style="--x:93px;--y:-192px;--r:74deg;--delay:0.6300000000000001s;--c:#6bcbff"></span><span style="--x:117px;--y:-80px;--r:90deg;--delay:0.7000000000000001s;--c:#7ee081"></span><span style="--x:141px;--y:-108px;--r:-70deg;--delay:0.77s;--c:#c084fc"></span><span style="--x:165px;--y:-136px;--r:-54deg;--delay:0.8400000000000001s;--c:#ff8c42"></span><span style="--x:189px;--y:-164px;--r:-38deg;--delay:0.9100000000000001s;--c:#ffffff"></span><span style="--x:45px;--y:-192px;--r:-22deg;--delay:0.0s;--c:#ff5c8a"></span><span style="--x:69px;--y:-80px;--r:-6deg;--delay:0.07s;--c:#ffd166"></span><span style="--x:93px;--y:-108px;--r:10deg;--delay:0.14s;--c:#6bcbff"></span><span style="--x:117px;--y:-136px;--r:26deg;--delay:0.21000000000000002s;--c:#7ee081"></span><span style="--x:141px;--y:-164px;--r:42deg;--delay:0.28s;--c:#c084fc"></span><span style="--x:165px;--y:-192px;--r:58deg;--delay:0.35000000000000003s;--c:#ff8c42"></span><span style="--x:189px;--y:-80px;--r:74deg;--delay:0.42000000000000004s;--c:#ffffff"></span><span style="--x:45px;--y:-108px;--r:90deg;--delay:0.49000000000000005s;--c:#ff5c8a"></span><span style="--x:69px;--y:-136px;--r:-70deg;--delay:0.56s;--c:#ffd166"></span><span style="--x:93px;--y:-164px;--r:-54deg;--delay:0.6300000000000001s;--c:#6bcbff"></span><span style="--x:117px;--y:-192px;--r:-38deg;--delay:0.7000000000000001s;--c:#7ee081"></span><span style="--x:141px;--y:-80px;--r:-22deg;--delay:0.77s;--c:#c084fc"></span><span style="--x:165px;--y:-108px;--r:-6deg;--delay:0.8400000000000001s;--c:#ff8c42"></span><span style="--x:189px;--y:-136px;--r:10deg;--delay:0.9100000000000001s;--c:#ffffff"></span></div><div class="blast right"><span style="--x:45px;--y:-80px;--r:-70deg;--delay:0.0s;--c:#ff5c8a"></span><span style="--x:69px;--y:-108px;--r:-54deg;--delay:0.07s;--c:#ffd166"></span><span style="--x:93px;--y:-136px;--r:-38deg;--delay:0.14s;--c:#6bcbff"></span><span style="--x:117px;--y:-164px;--r:-22deg;--delay:0.21000000000000002s;--c:#7ee081"></span><span style="--x:141px;--y:-192px;--r:-6deg;--delay:0.28s;--c:#c084fc"></span><span style="--x:165px;--y:-80px;--r:10deg;--delay:0.35000000000000003s;--c:#ff8c42"></span><span style="--x:189px;--y:-108px;--r:26deg;--delay:0.42000000000000004s;--c:#ffffff"></span><span style="--x:45px;--y:-136px;--r:42deg;--delay:0.49000000000000005s;--c:#ff5c8a"></span><span style="--x:69px;--y:-164px;--r:58deg;--delay:0.56s;--c:#ffd166"></span><span style="--x:93px;--y:-192px;--r:74deg;--delay:0.6300000000000001s;--c:#6bcbff"></span><span style="--x:117px;--y:-80px;--r:90deg;--delay:0.7000000000000001s;--c:#7ee081"></span><span style="--x:141px;--y:-108px;--r:-70deg;--delay:0.77s;--c:#c084fc"></span><span style="--x:165px;--y:-136px;--r:-54deg;--delay:0.8400000000000001s;--c:#ff8c42"></span><span style="--x:189px;--y:-164px;--r:-38deg;--delay:0.9100000000000001s;--c:#ffffff"></span><span style="--x:45px;--y:-192px;--r:-22deg;--delay:0.0s;--c:#ff5c8a"></span><span style="--x:69px;--y:-80px;--r:-6deg;--delay:0.07s;--c:#ffd166"></span><span style="--x:93px;--y:-108px;--r:10deg;--delay:0.14s;--c:#6bcbff"></span><span style="--x:117px;--y:-136px;--r:26deg;--delay:0.21000000000000002s;--c:#7ee081"></span><span style="--x:141px;--y:-164px;--r:42deg;--delay:0.28s;--c:#c084fc"></span><span style="--x:165px;--y:-192px;--r:58deg;--delay:0.35000000000000003s;--c:#ff8c42"></span><span style="--x:189px;--y:-80px;--r:74deg;--delay:0.42000000000000004s;--c:#ffffff"></span><span style="--x:45px;--y:-108px;--r:90deg;--delay:0.49000000000000005s;--c:#ff5c8a"></span><span style="--x:69px;--y:-136px;--r:-70deg;--delay:0.56s;--c:#ffd166"></span><span style="--x:93px;--y:-164px;--r:-54deg;--delay:0.6300000000000001s;--c:#6bcbff"></span><span style="--x:117px;--y:-192px;--r:-38deg;--delay:0.7000000000000001s;--c:#7ee081"></span><span style="--x:141px;--y:-80px;--r:-22deg;--delay:0.77s;--c:#c084fc"></span><span style="--x:165px;--y:-108px;--r:-6deg;--delay:0.8400000000000001s;--c:#ff8c42"></span><span style="--x:189px;--y:-136px;--r:10deg;--delay:0.9100000000000001s;--c:#ffffff"></span></div><div class="container">
-  <div class="logo"><img src="TLE-Logo.jpg" alt="TLE Technologies" onerror="this.style.display='none'"></div>
-  <div class="confetti-piece" style="--startX:2%;--pcolor:#ff5c8a;--dx:180px;--dy:260px;--rot:280deg;--delay:0s"></div>
-  <div class="confetti-piece" style="--startX:4%;--pcolor:#ffd166;--dx:260px;--dy:200px;--rot:340deg;--delay:.05s"></div>
-  <div class="confetti-piece" style="--startX:6%;--pcolor:#6bcbff;--dx:220px;--dy:340px;--rot:200deg;--delay:.1s"></div>
-  <div class="confetti-piece" style="--startX:98%;--pcolor:#ff5c8a;--dx:-180px;--dy:260px;--rot:-280deg;--delay:0s"></div>
-  <div class="confetti-piece" style="--startX:96%;--pcolor:#ffd166;--dx:-260px;--dy:200px;--rot:-340deg;--delay:.05s"></div>
-  <div class="confetti-piece" style="--startX:94%;--pcolor:#6bcbff;--dx:-220px;--dy:340px;--rot:-200deg;--delay:.1s"></div>
-  <div class="balloon" style="left:10%;font-size:30px;animation-duration:8s;animation-delay:1.5s">🎈</div>
-  <div class="balloon" style="left:38%;font-size:26px;animation-duration:10s;animation-delay:3.5s">🎈</div>
-  <div class="balloon" style="left:82%;font-size:28px;animation-duration:9.5s;animation-delay:4.5s">🎈</div>
-
-  <div class="title" id="birthdayTitle">🎉 HAPPY BIRTHDAY! 🎉</div>
-  <div class="subtitle" id="birthdaySubtitle"></div>
-  <div class="date" id="birthdayDate"></div>
-
-  <div class="photo-wrap">
-    <img id="employeePhoto" class="photo-inner" alt="Employee photo" style="display:none">
-    <div id="fallback" class="fallback">🎂</div>
-  </div>
-
-  <div class="name" id="employeeName">Employee</div>
-  <div class="department" id="department"></div>
-  <div class="message">🎂 Wishing you a very Happy Birthday! 🎂<br><br>
-    May your special day be filled with happiness, laughter and wonderful memories.<br>
-    We wish you great success, good health and happiness in the year ahead!
-  </div>
+<!-- LOGO -->
+<div class="logo">
+  <img
+    src="TLE-Logo.jpg"
+    alt="TLE Technologies"
+    onerror="this.style.display='none'"
+  >
 </div>
 
+<!-- DECORATION -->
+<div class="confetti" style="left:5%;background:#ff5c8a;animation-delay:0s;"></div>
+<div class="confetti" style="left:15%;background:#ffd166;animation-delay:1s;"></div>
+<div class="confetti" style="left:30%;background:#6bcbff;animation-delay:2s;"></div>
+<div class="confetti" style="left:50%;background:#7ee081;animation-delay:.5s;"></div>
+<div class="confetti" style="left:70%;background:#c084fc;animation-delay:1.5s;"></div>
+<div class="confetti" style="left:85%;background:#ff5c8a;animation-delay:2.5s;"></div>
+<div class="confetti" style="left:95%;background:#ffd166;animation-delay:1s;"></div>
+
+<div class="balloon" style="left:10%;animation-delay:1s;">🎈</div>
+<div class="balloon" style="left:45%;animation-delay:4s;">🎈</div>
+<div class="balloon" style="left:80%;animation-delay:2s;">🎈</div>
+
+<div class="container">
+
+  <div class="title" id="birthdayTitle">
+    🎉 HAPPY BIRTHDAY! 🎉
+  </div>
+
+  <div class="subtitle" id="birthdaySubtitle"></div>
+
+  <div class="date" id="birthdayDate"></div>
+
+  <!-- EMPLOYEE PHOTO -->
+  <div class="photo-wrap">
+
+    <img
+      id="employeePhoto"
+      class="photo-inner"
+      alt="Employee photo"
+    >
+
+    <div id="fallback" class="fallback">
+      🎂
+    </div>
+
+  </div>
+
+  <div class="name" id="employeeName">
+    Employee
+  </div>
+
+  <div class="department" id="department"></div>
+
+  <div class="message">
+    🎂 Wishing you a very Happy Birthday! 🎂
+    <br><br>
+    May your special day be filled with happiness,
+    laughter and wonderful memories.
+    <br>
+    We wish you great success, good health and happiness
+    in the year ahead!
+  </div>
+
+</div>
 
 <script>
-const employees = [{"name": "ANJU A V", "day": 1, "month": 1, "department": "IPC", "photo": ""}, {"name": "Gaurav Kannath Shelke", "day": 3, "month": 1, "department": "AMM", "photo": ""}, {"name": "Rajkumaran T", "day": 6, "month": 1, "department": "CMM", "photo": ""}, {"name": "SARVESH S NIMHAN", "day": 6, "month": 1, "department": "CMM", "photo": ""}, {"name": "Nandhakumar Gopal", "day": 8, "month": 1, "department": "EFW", "photo": ""}, {"name": "CHANDAN L", "day": 21, "month": 1, "department": "IPC", "photo": ""}, {"name": "Pavan kumar D", "day": 23, "month": 1, "department": "CMM", "photo": ""}, {"name": "Prakash Varnekar", "day": 28, "month": 1, "department": "EFW", "photo": ""}, {"name": "E SAIKIRAN REDDY", "day": 3, "month": 2, "department": "IPC", "photo": ""}, {"name": "RANJITH BABU K M", "day": 3, "month": 2, "department": "IPC", "photo": ""}, {"name": "Shubham Dinkar Jagtap", "day": 5, "month": 2, "department": "CMM", "photo": ""}, {"name": "Pavithra", "day": 19, "month": 2, "department": "CMM", "photo": ""}, {"name": "Pooja R", "day": 19, "month": 2, "department": "EFW", "photo": ""}, {"name": "Pradeep M", "day": 10, "month": 3, "department": "ILLUSTRATION", "photo": ""}, {"name": "Faiz Ahmad", "day": 20, "month": 3, "department": "EFW", "photo": ""}, {"name": "Abishek C", "day": 27, "month": 3, "department": "CMM", "photo": ""}, {"name": "Vigneshwar Palanirajan", "day": 27, "month": 3, "department": "CMM", "photo": ""}, {"name": "Nisanth Reddy.D", "day": 30, "month": 3, "department": "CMM", "photo": ""}, {"name": "DARSHAN KR", "day": 3, "month": 4, "department": "EFW", "photo": ""}, {"name": "Punam Balu Avhad", "day": 7, "month": 4, "department": "CMM", "photo": ""}, {"name": "Dinesh Chalicheemala", "day": 11, "month": 4, "department": "EFW", "photo": ""}, {"name": "Anandam Manoj Mourya", "day": 29, "month": 4, "department": "AMM", "photo": ""}, {"name": "Atish Ajay Acham", "day": 6, "month": 5, "department": "CMM", "photo": ""}, {"name": "Sumit shinde", "day": 13, "month": 5, "department": "IPC", "photo": ""}, {"name": "Kathir N", "day": 14, "month": 5, "department": "AMM", "photo": ""}, {"name": "Kavinash", "day": 16, "month": 5, "department": "CMM", "photo": ""}, {"name": "Yuthishtran S", "day": 17, "month": 5, "department": "ILLUSTRATION", "photo": ""}, {"name": "Golden Rejees", "day": 21, "month": 5, "department": "IPC", "photo": ""}, {"name": "Rajasekar R", "day": 21, "month": 5, "department": "ILLUSTRATION", "photo": ""}, {"name": "Sumega Sree S", "day": 25, "month": 5, "department": "IPC", "photo": ""}, {"name": "G PRABHU PRASANTH", "day": 26, "month": 5, "department": "AMM", "photo": ""}, {"name": "Raja L", "day": 27, "month": 5, "department": "EFW", "photo": ""}, {"name": "SHREYANSH SINGH", "day": 3, "month": 6, "department": "IPC", "photo": ""}, {"name": "ALOK BHARDWAJ H A", "day": 4, "month": 6, "department": "IPC", "photo": ""}, {"name": "Vishnuvarthan D", "day": 4, "month": 6, "department": "EFW", "photo": ""}, {"name": "SANJAY", "day": 7, "month": 6, "department": "ILLUSTRATION", "photo": ""}, {"name": "AMITH GOWDA M S", "day": 9, "month": 6, "department": "IPC", "photo": ""}, {"name": "Arunkumar G", "day": 9, "month": 6, "department": "EFW", "photo": ""}, {"name": "K.Sanjay Kumar Reddy", "day": 9, "month": 6, "department": "EFW", "photo": ""}, {"name": "VINOD KUMAR", "day": 9, "month": 6, "department": "IPC", "photo": ""}, {"name": "V.Abinesh", "day": 11, "month": 6, "department": "IPC", "photo": ""}, {"name": "BHARATHY H", "day": 13, "month": 6, "department": "EFW", "photo": ""}, {"name": "Yashashwini.G", "day": 13, "month": 6, "department": "EFW", "photo": ""}, {"name": "Hanumanthu", "day": 15, "month": 6, "department": "AMM", "photo": ""}, {"name": "K SUBBARAYUDU", "day": 18, "month": 6, "department": "ILLUSTRATION", "photo": ""}, {"name": "MOHAMED TANVEER", "day": 19, "month": 6, "department": "IPC", "photo": ""}, {"name": "Gowri", "day": 20, "month": 6, "department": "CMM", "photo": ""}, {"name": "Raghu M", "day": 24, "month": 6, "department": "FUNCTIONS", "photo": ""}, {"name": "RAHUL MALVIYA", "day": 26, "month": 6, "department": "IPC", "photo": ""}, {"name": "Pavan Kumar A", "day": 27, "month": 6, "department": "ILLUSTRATION", "photo": ""}, {"name": "Pratap Kumar T", "day": 1, "month": 7, "department": "EFW", "photo": ""}, {"name": "Aswin R", "day": 6, "month": 7, "department": "ILLUSTRATION", "photo": ""}, {"name": "M.Lokesh", "day": 6, "month": 7, "department": "CMM", "photo": ""}, {"name": "SHAFNA SULTHANA P", "day": 10, "month": 7, "department": "IPC", "photo": ""}, {"name": "Anand", "day": 11, "month": 7, "department": "CMM", "photo": ""}, {"name": "Felix I", "day": 16, "month": 7, "department": "AMM", "photo": ""}, {"name": "Amit", "day": 20, "month": 7, "department": "IPC", "photo": ""}, {"name": "Harish K", "day": 29, "month": 7, "department": "ILLUSTRATION", "photo": ""}, {"name": "Thirumal S", "day": 31, "month": 7, "department": "EFW", "photo": ""}, {"name": "Alankar Patil", "day": 2, "month": 8, "department": "EFW", "photo": ""}, {"name": "Ramkamal S", "day": 2, "month": 8, "department": "EFW", "photo": ""}, {"name": "Prasanna T", "day": 7, "month": 8, "department": "AMM", "photo": ""}, {"name": "Nishant Mishra", "day": 10, "month": 8, "department": "AMM", "photo": ""}, {"name": "CHETHANKUMAR MS", "day": 16, "month": 8, "department": "ILLUSTRATION", "photo": ""}, {"name": "Bhargava Kumar G", "day": 20, "month": 8, "department": "ILLUSTRATION", "photo": ""}, {"name": "Pavithra M", "day": 21, "month": 8, "department": "EFW", "photo": ""}, {"name": "NITESH KUMAR", "day": 22, "month": 8, "department": "Quality", "photo": ""}, {"name": "Sahana Ghorpade", "day": 26, "month": 8, "department": "IPC", "photo": ""}, {"name": "Sai Balaji A P", "day": 26, "month": 8, "department": "IPC", "photo": ""}, {"name": "Achyut Sirsat", "day": 9, "month": 9, "department": "EFW", "photo": ""}, {"name": "Akash Kumar Acharya", "day": 11, "month": 9, "department": "CMM", "photo": ""}, {"name": "Kunika Malviya", "day": 11, "month": 9, "department": "AMM", "photo": ""}, {"name": "Karthik B N", "day": 29, "month": 9, "department": "ILLUSTRATION", "photo": ""}, {"name": "Rohan Ravindra Gundgal", "day": 30, "month": 9, "department": "EFW", "photo": ""}, {"name": "Mohanraj M", "day": 16, "month": 10, "department": "IPC", "photo": ""}, {"name": "Anisha CR", "day": 27, "month": 10, "department": "EFW", "photo": ""}, {"name": "Bala Gopal Reddy Avuthu", "day": 28, "month": 10, "department": "EFW", "photo": ""}, {"name": "Nayan Kumar", "day": 29, "month": 10, "department": "CMM", "photo": ""}, {"name": "Kishan V", "day": 3, "month": 11, "department": "ILLUSTRATION", "photo": ""}, {"name": "Saleem", "day": 4, "month": 11, "department": "ILLUSTRATION", "photo": ""}, {"name": "Rahul Kumar", "day": 5, "month": 11, "department": "EFW", "photo": ""}, {"name": "MOHANARANGAN DEVAKUMAR", "day": 9, "month": 11, "department": "IPC", "photo": ""}, {"name": "Manas Bora", "day": 12, "month": 11, "department": "ILLUSTRATION", "photo": ""}, {"name": "HARI HARAN K", "day": 14, "month": 11, "department": "AMM", "photo": ""}, {"name": "Rajkumar K S", "day": 28, "month": 11, "department": "CMM", "photo": ""}, {"name": "Sri Raguram S", "day": 8, "month": 12, "department": "EFW", "photo": ""}, {"name": "Tamilselvan R", "day": 8, "month": 12, "department": "ILLUSTRATION", "photo": ""}, {"name": "Bharath Jayanth R", "day": 9, "month": 12, "department": "ILLUSTRATION", "photo": ""}, {"name": "Nitin Dixit", "day": 10, "month": 12, "department": "CMM", "photo": ""}, {"name": "Sankar R", "day": 10, "month": 12, "department": "EFW", "photo": ""}, {"name": "Pavan Kalyan B V", "day": 15, "month": 12, "department": "EFW", "photo": ""}, {"name": "Karthikeyan J", "day": 20, "month": 12, "department": "AMM", "photo": ""}, {"name": "N.Rajasekhar reddy", "day": 20, "month": 12, "department": "EFW", "photo": ""}, {"name": "MOHAMMED ILYAS P", "day": 25, "month": 12, "department": "CMM", "photo": ""}, {"name": "Girish M", "day": 27, "month": 12, "department": "CMM", "photo": ""}, {"name": "Manikanta", "day": 27, "month": 12, "department": "AMM", "photo": ""}, {"name": "Nithish Kumar S", "day": 30, "month": 12, "department": "CMM", "photo": ""}];
 
-function todayMatches(rec) {
-  const now = new Date();
-  return Number(rec.day) === now.getDate() && Number(rec.month) === now.getMonth() + 1;
-}
-function displayDate(rec) {
-  if (!rec || !rec.day || !rec.month) return '';
-  return `${String(rec.day).padStart(2,'0')}/${String(rec.month).padStart(2,'0')}`;
-}
-function initials(name) {
-  return String(name||'Employee').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
-}
-function photoFromEmployeeName(name) {
-  // The filename should match the employee name, e.g.:
-  // Achyut Sirsat.jpg
-  // Photos can be in the same folder as index.html or in a "photos" folder.
-  const safeName = String(name || '').trim();
-  if (!safeName) return '';
+/* =========================================================
+   EMPLOYEE DATA
+   ========================================================= */
 
-  const base = 'photos/' + safeName;
-  const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
+const employees = [
 
-  // Return the first conventional filename. The browser will fall back
-  // through the extensions automatically if the first one does not exist.
-  return base + extensions[0];
-}
+  {
+    name:"ANJU A V",
+    day:1,
+    month:1,
+    department:"IPC"
+  },
 
-function show(rec, isToday = false) {
-  const title = document.getElementById('birthdayTitle');
-  const subtitle = document.getElementById('birthdaySubtitle');
+  {
+    name:"Gaurav Kannath Shelke",
+    day:3,
+    month:1,
+    department:"AMM"
+  },
 
-  if (isToday) {
-    title.textContent = '🎉 HAPPY BIRTHDAY! 🎉';
-    subtitle.textContent = 'Wishing you a wonderful day!';
-  } else {
-    title.textContent = '🎊 COMING BIRTHDAY 🎊';
-    subtitle.textContent = '';
+  {
+    name:"Rajkumaran T",
+    day:6,
+    month:1,
+    department:"CMM"
+  },
+
+  {
+    name:"SARVESH S NIMHAN",
+    day:6,
+    month:1,
+    department:"CMM"
+  },
+
+  {
+    name:"Nandhakumar Gopal",
+    day:8,
+    month:1,
+    department:"EFW"
+  },
+
+  {
+    name:"CHANDAN L",
+    day:21,
+    month:1,
+    department:"IPC"
+  },
+
+  {
+    name:"Pavan kumar D",
+    day:23,
+    month:1,
+    department:"CMM"
+  },
+
+  {
+    name:"Prakash Varnekar",
+    day:28,
+    month:1,
+    department:"EFW"
+  },
+
+  {
+    name:"E SAIKIRAN REDDY",
+    day:3,
+    month:2,
+    department:"IPC"
+  },
+
+  {
+    name:"RANJITH BABU K M",
+    day:3,
+    month:2,
+    department:"IPC"
+  },
+
+  {
+    name:"Shubham Dinkar Jagtap",
+    day:5,
+    month:2,
+    department:"CMM"
+  },
+
+  {
+    name:"Pavithra",
+    day:19,
+    month:2,
+    department:"CMM"
+  },
+
+  {
+    name:"Pooja R",
+    day:19,
+    month:2,
+    department:"EFW"
+  },
+
+  {
+    name:"Pradeep M",
+    day:10,
+    month:3,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Faiz Ahmad",
+    day:20,
+    month:3,
+    department:"EFW"
+  },
+
+  {
+    name:"Abishek C",
+    day:27,
+    month:3,
+    department:"CMM"
+  },
+
+  {
+    name:"Vigneshwar Palanirajan",
+    day:27,
+    month:3,
+    department:"CMM"
+  },
+
+  {
+    name:"Nisanth Reddy.D",
+    day:30,
+    month:3,
+    department:"CMM"
+  },
+
+  {
+    name:"DARSHAN KR",
+    day:3,
+    month:4,
+    department:"EFW"
+  },
+
+  {
+    name:"Punam Balu Avhad",
+    day:7,
+    month:4,
+    department:"CMM"
+  },
+
+  {
+    name:"Dinesh Chalicheemala",
+    day:11,
+    month:4,
+    department:"EFW"
+  },
+
+  {
+    name:"Anandam Manoj Mourya",
+    day:29,
+    month:4,
+    department:"AMM"
+  },
+
+  {
+    name:"Atish Ajay Acham",
+    day:6,
+    month:5,
+    department:"CMM"
+  },
+
+  {
+    name:"Sumit shinde",
+    day:13,
+    month:5,
+    department:"IPC"
+  },
+
+  {
+    name:"Kathir N",
+    day:14,
+    month:5,
+    department:"AMM"
+  },
+
+  {
+    name:"Kavinash",
+    day:16,
+    month:5,
+    department:"CMM"
+  },
+
+  {
+    name:"Yuthishtran S",
+    day:17,
+    month:5,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Golden Rejees",
+    day:21,
+    month:5,
+    department:"IPC"
+  },
+
+  {
+    name:"Rajasekar R",
+    day:21,
+    month:5,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Sumega Sree S",
+    day:25,
+    month:5,
+    department:"IPC"
+  },
+
+  {
+    name:"G PRABHU PRASANTH",
+    day:26,
+    month:5,
+    department:"AMM"
+  },
+
+  {
+    name:"Raja L",
+    day:27,
+    month:5,
+    department:"EFW"
+  },
+
+  {
+    name:"SHREYANSH SINGH",
+    day:3,
+    month:6,
+    department:"IPC"
+  },
+
+  {
+    name:"ALOK BHARDWAJ H A",
+    day:4,
+    month:6,
+    department:"IPC"
+  },
+
+  {
+    name:"Vishnuvarthan D",
+    day:4,
+    month:6,
+    department:"EFW"
+  },
+
+  {
+    name:"SANJAY",
+    day:7,
+    month:6,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"AMITH GOWDA M S",
+    day:9,
+    month:6,
+    department:"IPC"
+  },
+
+  {
+    name:"Arunkumar G",
+    day:9,
+    month:6,
+    department:"EFW"
+  },
+
+  {
+    name:"K.Sanjay Kumar Reddy",
+    day:9,
+    month:6,
+    department:"EFW"
+  },
+
+  {
+    name:"VINOD KUMAR",
+    day:9,
+    month:6,
+    department:"IPC"
+  },
+
+  {
+    name:"V.Abinesh",
+    day:11,
+    month:6,
+    department:"IPC"
+  },
+
+  {
+    name:"BHARATHY H",
+    day:13,
+    month:6,
+    department:"EFW"
+  },
+
+  {
+    name:"Yashashwini.G",
+    day:13,
+    month:6,
+    department:"EFW"
+  },
+
+  {
+    name:"Hanumanthu",
+    day:15,
+    month:6,
+    department:"AMM"
+  },
+
+  {
+    name:"K SUBBARAYUDU",
+    day:18,
+    month:6,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"MOHAMED TANVEER",
+    day:19,
+    month:6,
+    department:"IPC"
+  },
+
+  {
+    name:"Gowri",
+    day:20,
+    month:6,
+    department:"CMM"
+  },
+
+  {
+    name:"Raghu M",
+    day:24,
+    month:6,
+    department:"FUNCTIONS"
+  },
+
+  {
+    name:"RAHUL MALVIYA",
+    day:26,
+    month:6,
+    department:"IPC"
+  },
+
+  {
+    name:"Pavan Kumar A",
+    day:27,
+    month:6,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Pratap Kumar T",
+    day:1,
+    month:7,
+    department:"EFW"
+  },
+
+  {
+    name:"Aswin R",
+    day:6,
+    month:7,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"M.Lokesh",
+    day:6,
+    month:7,
+    department:"CMM"
+  },
+
+  {
+    name:"SHAFNA SULTHANA P",
+    day:10,
+    month:7,
+    department:"IPC"
+  },
+
+  {
+    name:"Anand",
+    day:11,
+    month:7,
+    department:"CMM"
+  },
+
+  {
+    name:"Felix I",
+    day:16,
+    month:7,
+    department:"AMM"
+  },
+
+  {
+    name:"Amit",
+    day:20,
+    month:7,
+    department:"IPC"
+  },
+
+  {
+    name:"Harish K",
+    day:29,
+    month:7,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Thirumal S",
+    day:31,
+    month:7,
+    department:"EFW"
+  },
+
+  {
+    name:"Alankar Patil",
+    day:2,
+    month:8,
+    department:"EFW"
+  },
+
+  {
+    name:"Ramkamal S",
+    day:2,
+    month:8,
+    department:"EFW"
+  },
+
+  {
+    name:"Prasanna T",
+    day:7,
+    month:8,
+    department:"AMM"
+  },
+
+  {
+    name:"Nishant Mishra",
+    day:10,
+    month:8,
+    department:"AMM"
+  },
+
+  {
+    name:"CHETHANKUMAR MS",
+    day:16,
+    month:8,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Bhargava Kumar G",
+    day:20,
+    month:8,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Pavithra M",
+    day:21,
+    month:8,
+    department:"EFW"
+  },
+
+  {
+    name:"NITESH KUMAR",
+    day:22,
+    month:8,
+    department:"Quality"
+  },
+
+  {
+    name:"Sahana Ghorpade",
+    day:26,
+    month:8,
+    department:"IPC"
+  },
+
+  {
+    name:"Sai Balaji A P",
+    day:26,
+    month:8,
+    department:"IPC"
+  },
+
+  {
+    name:"Achyut Sirsat",
+    day:9,
+    month:9,
+    department:"EFW"
+  },
+
+  {
+    name:"Akash Kumar Acharya",
+    day:11,
+    month:9,
+    department:"CMM"
+  },
+
+  {
+    name:"Kunika Malviya",
+    day:11,
+    month:9,
+    department:"AMM"
+  },
+
+  {
+    name:"Karthik B N",
+    day:29,
+    month:9,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Rohan Ravindra Gundgal",
+    day:30,
+    month:9,
+    department:"EFW"
+  },
+
+  {
+    name:"Mohanraj M",
+    day:16,
+    month:10,
+    department:"IPC"
+  },
+
+  {
+    name:"Anisha CR",
+    day:27,
+    month:10,
+    department:"EFW"
+  },
+
+  {
+    name:"Bala Gopal Reddy Avuthu",
+    day:28,
+    month:10,
+    department:"EFW"
+  },
+
+  {
+    name:"Nayan Kumar",
+    day:29,
+    month:10,
+    department:"CMM"
+  },
+
+  {
+    name:"Kishan V",
+    day:3,
+    month:11,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Saleem",
+    day:4,
+    month:11,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Rahul Kumar",
+    day:5,
+    month:11,
+    department:"EFW"
+  },
+
+  {
+    name:"MOHANARANGAN DEVAKUMAR",
+    day:9,
+    month:11,
+    department:"IPC"
+  },
+
+  {
+    name:"Manas Bora",
+    day:12,
+    month:11,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"HARI HARAN K",
+    day:14,
+    month:11,
+    department:"AMM"
+  },
+
+  {
+    name:"Rajkumar K S",
+    day:28,
+    month:11,
+    department:"CMM"
+  },
+
+  {
+    name:"Sri Raguram S",
+    day:8,
+    month:12,
+    department:"EFW"
+  },
+
+  {
+    name:"Tamilselvan R",
+    day:8,
+    month:12,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Bharath Jayanth R",
+    day:9,
+    month:12,
+    department:"ILLUSTRATION"
+  },
+
+  {
+    name:"Nitin Dixit",
+    day:10,
+    month:12,
+    department:"CMM"
+  },
+
+  {
+    name:"Sankar R",
+    day:10,
+    month:12,
+    department:"EFW"
+  },
+
+  {
+    name:"Pavan Kalyan B V",
+    day:15,
+    month:12,
+    department:"EFW"
+  },
+
+  {
+    name:"Karthikeyan J",
+    day:20,
+    month:12,
+    department:"AMM"
+  },
+
+  {
+    name:"N.Rajasekhar reddy",
+    day:20,
+    month:12,
+    department:"EFW"
+  },
+
+  {
+    name:"MOHAMMED ILYAS P",
+    day:25,
+    month:12,
+    department:"CMM"
+  },
+
+  {
+    name:"Girish M",
+    day:27,
+    month:12,
+    department:"CMM"
+  },
+
+  {
+    name:"Manikanta",
+    day:27,
+    month:12,
+    department:"AMM"
+  },
+
+  {
+    name:"Nithish Kumar S",
+    day:30,
+    month:12,
+    department:"CMM"
   }
 
-  document.getElementById('employeeName').textContent = rec.name || 'Employee';
-  document.getElementById('department').textContent = rec.department || '';
+];
 
-  // Show the employee's complete birthday at the bottom.
-  document.getElementById('birthdayDate').textContent =
-    (rec.day && rec.month)
-      ? `Birthday: ${new Date(2026, Number(rec.month)-1, Number(rec.day)).toLocaleDateString('en-IN', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric'
-        })}`
-      : '';
 
-  const img = document.getElementById('employeePhoto');
-  const fb = document.getElementById('fallback');
-  fb.textContent = initials(rec.name);
+/* =========================================================
+   INITIALS
+   ========================================================= */
 
-  // Automatically match the GitHub image to the employee name.
-  // Your screenshot shows the image is in the SAME folder as index.html,
-  // so try the root folder first, then the optional "photos" folder.
-  const employeeName = String(rec.name || '').trim();
-  const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
+function initials(name){
 
-  const photoCandidates = rec.photo
-    ? [rec.photo]
-    : extensions.flatMap(ext => [
-        employeeName + ext,
-        'photos/' + employeeName + ext
-      ]);
+  return String(name || "Employee")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0,2)
+    .map(x => x[0])
+    .join("")
+    .toUpperCase();
 
-  let photoIndex = 0;
-  img.style.display = 'none';
-  fb.style.display = 'flex';
-
-  function tryNextPhoto() {
-    if (photoIndex >= photoCandidates.length) {
-      img.style.display = 'none';
-      fb.style.display = 'flex';
-      return;
-    }
-
-    img.src = photoCandidates[photoIndex++];
-    img.style.display = 'block';
-    fb.style.display = 'none';
-  }
-
-  img.onerror = tryNextPhoto;
-  img.onload = () => {
-    img.style.display = 'block';
-    fb.style.display = 'none';
-  };
-
-  tryNextPhoto();
 }
 
-function run() {
-  const now = new Date();
-  const currentMonth = now.getMonth() + 1;
-  const today = now.getDate();
 
-  const monthly = [...employees]
-    .filter(r => Number(r.month) === currentMonth)
-    .sort((a, b) =>
-      Number(a.day) - Number(b.day) ||
-      String(a.name).localeCompare(String(b.name))
-    );
+/* =========================================================
+   AUTOMATIC PHOTO LOADER
+   ========================================================= */
 
-  const todays = monthly.filter(r => Number(r.day) === today);
-  const upcoming = monthly.filter(r => Number(r.day) > today);
+function loadEmployeePhoto(employeeName){
 
-  // Current month's birthdays only.
-  // Today's birthdays first, then upcoming birthdays.
-  const queue = [
-    ...todays.map(r => ({r, isToday: true})),
-    ...upcoming.map(r => ({r, isToday: false}))
+  const img =
+    document.getElementById("employeePhoto");
+
+  const fallback =
+    document.getElementById("fallback");
+
+  // Hide everything first
+  img.style.display = "none";
+  fallback.style.display = "flex";
+
+  img.removeAttribute("src");
+
+  /*
+    Automatically searches these filenames:
+
+    Achyut Sirsat.jpg
+    Achyut Sirsat.jpeg
+    Achyut Sirsat.png
+    Achyut Sirsat.webp
+
+    It checks the GitHub repository root first.
+
+    Then it checks:
+
+    photos/Achyut Sirsat.jpg
+    photos/Achyut Sirsat.jpeg
+    photos/Achyut Sirsat.png
+    photos/Achyut Sirsat.webp
+  */
+
+  const extensions = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp"
   ];
 
-  if (!queue.length) {
-    show({
-      name: 'No Upcoming Birthdays',
-      department: '',
-      day: '',
-      month: '',
-      photo: ''
-    }, false);
-    return;
-  }
+  const candidates = [];
+
+  extensions.forEach(ext => {
+
+    candidates.push(
+      "./" +
+      encodeURIComponent(employeeName) +
+      ext
+    );
+
+  });
+
+  extensions.forEach(ext => {
+
+    candidates.push(
+      "./photos/" +
+      encodeURIComponent(employeeName) +
+      ext
+    );
+
+  });
+
 
   let index = 0;
 
-  function displayNext() {
-    show(queue[index].r, queue[index].isToday);
-    index = (index + 1) % queue.length;
+
+  function tryNext(){
+
+    if(index >= candidates.length){
+
+      console.log(
+        "No photo found for:",
+        employeeName
+      );
+
+      img.style.display = "none";
+      fallback.style.display = "flex";
+
+      return;
+    }
+
+
+    const imageURL = candidates[index];
+
+    index++;
+
+
+    console.log(
+      "Trying employee photo:",
+      imageURL
+    );
+
+
+    img.onload = function(){
+
+      console.log(
+        "PHOTO FOUND:",
+        imageURL
+      );
+
+      img.style.display = "block";
+      fallback.style.display = "none";
+
+    };
+
+
+    img.onerror = function(){
+
+      console.log(
+        "Photo not found:",
+        imageURL
+      );
+
+      tryNext();
+
+    };
+
+
+    img.src = imageURL;
+
   }
+
+
+  tryNext();
+
+}
+
+
+/* =========================================================
+   SHOW EMPLOYEE
+   ========================================================= */
+
+function showEmployee(employee,isToday){
+
+  const title =
+    document.getElementById("birthdayTitle");
+
+  const subtitle =
+    document.getElementById("birthdaySubtitle");
+
+  const name =
+    document.getElementById("employeeName");
+
+  const department =
+    document.getElementById("department");
+
+  const date =
+    document.getElementById("birthdayDate");
+
+  const fallback =
+    document.getElementById("fallback");
+
+
+  if(isToday){
+
+    title.textContent =
+      "🎉 HAPPY BIRTHDAY! 🎉";
+
+    subtitle.textContent =
+      "Wishing you a wonderful day!";
+
+  }else{
+
+    title.textContent =
+      "🎊 COMING BIRTHDAY 🎊";
+
+    subtitle.textContent =
+      "";
+
+  }
+
+
+  name.textContent =
+    employee.name || "Employee";
+
+
+  department.textContent =
+    employee.department || "";
+
+
+  if(employee.day && employee.month){
+
+    const year =
+      new Date().getFullYear();
+
+    const birthday =
+      new Date(
+        year,
+        Number(employee.month)-1,
+        Number(employee.day)
+      );
+
+
+    date.textContent =
+      "Birthday: " +
+      birthday.toLocaleDateString(
+        "en-IN",
+        {
+          day:"2-digit",
+          month:"long",
+          year:"numeric"
+        }
+      );
+
+  }else{
+
+    date.textContent = "";
+
+  }
+
+
+  fallback.textContent =
+    initials(employee.name);
+
+
+  /*
+    THIS IS THE IMPORTANT PART.
+
+    Employee:
+      Achyut Sirsat
+
+    Automatically searches:
+      Achyut Sirsat.jpg
+  */
+
+  loadEmployeePhoto(
+    String(employee.name || "").trim()
+  );
+
+}
+
+
+/* =========================================================
+   BIRTHDAY SYSTEM
+   ========================================================= */
+
+function startBirthdayDisplay(){
+
+  const now =
+    new Date();
+
+  const currentMonth =
+    now.getMonth() + 1;
+
+  const today =
+    now.getDate();
+
+
+  /*
+    Get employees for current month
+  */
+
+  const monthly =
+    employees
+      .filter(employee =>
+        Number(employee.month) === currentMonth
+      )
+      .sort((a,b) =>
+        Number(a.day) - Number(b.day)
+      );
+
+
+  /*
+    Today's birthdays
+  */
+
+  const todays =
+    monthly.filter(employee =>
+      Number(employee.day) === today
+    );
+
+
+  /*
+    Upcoming birthdays
+  */
+
+  const upcoming =
+    monthly.filter(employee =>
+      Number(employee.day) > today
+    );
+
+
+  /*
+    Today first.
+    Then upcoming birthdays.
+  */
+
+  const queue = [
+
+    ...todays.map(employee => ({
+      employee:employee,
+      today:true
+    })),
+
+    ...upcoming.map(employee => ({
+      employee:employee,
+      today:false
+    }))
+
+  ];
+
+
+  /*
+    No birthdays remaining this month
+  */
+
+  if(queue.length === 0){
+
+    document.getElementById(
+      "birthdayTitle"
+    ).textContent =
+      "🎂 NO UPCOMING BIRTHDAYS 🎂";
+
+    document.getElementById(
+      "birthdaySubtitle"
+    ).textContent =
+      "Have a wonderful day!";
+
+    document.getElementById(
+      "employeeName"
+    ).textContent = "";
+
+    document.getElementById(
+      "department"
+    ).textContent = "";
+
+    document.getElementById(
+      "birthdayDate"
+    ).textContent = "";
+
+    document.getElementById(
+      "employeePhoto"
+    ).style.display = "none";
+
+    document.getElementById(
+      "fallback"
+    ).style.display = "flex";
+
+    return;
+  }
+
+
+  let currentIndex = 0;
+
+
+  function displayNext(){
+
+    const item =
+      queue[currentIndex];
+
+
+    showEmployee(
+      item.employee,
+      item.today
+    );
+
+
+    currentIndex =
+      (currentIndex + 1) % queue.length;
+
+  }
+
+
+  /*
+    Show immediately
+  */
 
   displayNext();
 
-  // Change employee every 10 seconds.
-  setInterval(displayNext, 10000);
+
+  /*
+    Change employee every 10 seconds
+  */
+
+  setInterval(
+    displayNext,
+    10000
+  );
+
 }
 
-// Start birthday display.
-run();
 
-// Fully automatic midnight synchronization.
-// Checks the computer date every 30 seconds. If the date changes,
-// the page reloads and immediately rebuilds the birthday queue for the new day.
-let lastDateKey = new Date().toDateString();
-setInterval(() => {
-  const currentDateKey = new Date().toDateString();
-  if (currentDateKey !== lastDateKey) {
+/* =========================================================
+   START
+   ========================================================= */
+
+startBirthdayDisplay();
+
+
+/* =========================================================
+   AUTOMATIC MIDNIGHT REFRESH
+   ========================================================= */
+
+let lastDate =
+  new Date().toDateString();
+
+
+setInterval(function(){
+
+  const currentDate =
+    new Date().toDateString();
+
+
+  if(currentDate !== lastDate){
+
     window.location.reload();
-  }
-}, 30000);
 
-// Extra safeguard: schedule a reload shortly after the next local midnight.
-function scheduleMidnightSync() {
-  const now = new Date();
-  const nextMidnight = new Date(now);
-  nextMidnight.setHours(24, 0, 2, 0); // 2 seconds after midnight
-  const delay = nextMidnight.getTime() - now.getTime();
-  setTimeout(() => window.location.reload(), delay);
+  }
+
+},30000);
+
+
+/*
+   Extra midnight protection
+*/
+
+function scheduleMidnightRefresh(){
+
+  const now =
+    new Date();
+
+
+  const midnight =
+    new Date(now);
+
+
+  midnight.setHours(
+    24,
+    0,
+    2,
+    0
+  );
+
+
+  const delay =
+    midnight.getTime() -
+    now.getTime();
+
+
+  setTimeout(
+    function(){
+      window.location.reload();
+    },
+    delay
+  );
+
 }
-scheduleMidnightSync();
+
+
+scheduleMidnightRefresh();
 
 </script>
+
 </body>
 </html>
