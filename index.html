@@ -8,21 +8,21 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;min-width:100%;min-height:100%;overflow:hidden}
 body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;background:radial-gradient(circle at 30% 20%,#4a9b8e 0%,#2d6e7e 35%,#1a3f5c 70%,#0f2a44 100%)}
-.container{width:100vw;height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(3px,.7vh,12px);position:relative;padding:clamp(14px,2vh,28px) clamp(12px,3vw,50px);z-index:5;overflow:hidden}
+.container{width:100vw;height:100vh;height:100dvh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(3px,.65vh,12px);position:relative;padding:clamp(10px,1.5vh,24px) clamp(10px,2.5vw,45px);z-index:5;overflow:hidden}
 .logo{position:fixed;top:clamp(12px,2vh,28px);left:clamp(14px,2vw,32px);height:clamp(34px,5vh,70px);max-width:22vw;z-index:20}
 .logo img{height:100%;max-width:100%;object-fit:contain;display:block}
 .title{font-size:clamp(28px,5.2vw,82px);font-weight:bold;line-height:1.05;text-shadow:0 5px 15px rgba(0,0,0,.3);animation:bounce 2s infinite}
 .subtitle{font-size:clamp(16px,2.4vw,34px);line-height:1.15}
 .date{font-size:clamp(14px,1.8vw,26px);font-weight:bold;line-height:1.1;opacity:.95}
 .photo-wrap{
-  width:min(55vw,58vh,620px);
-  height:min(55vw,58vh,620px);
+  width:min(58vw,58vh,680px);
+  height:min(58vw,58vh,680px);
   min-width:220px;
   min-height:220px;
   border-radius:24px;
-  padding:clamp(6px,1vw,12px);
+  padding:clamp(6px,0.9vw,12px);
   background:#fff;
-  box-shadow:0 0 30px rgba(255,255,255,.8),0 15px 40px rgba(0,0,0,.35);
+  box-shadow:0 0 35px rgba(255,255,255,.85),0 15px 45px rgba(0,0,0,.4);
   overflow:hidden;
   animation:glow 2s infinite alternate;
   flex:0 0 auto;
@@ -37,7 +37,11 @@ body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;backgro
   object-position:center;
   border-radius:16px;
   display:block;
-  background:#1f5b6d;
+  background:#142f3d;
+  transform:scale(1);
+  transform-origin:center center;
+  animation:faceZoom 10s ease-in-out infinite alternate;
+  will-change:transform;
 }
 .fallback{
   width:100%;
@@ -49,6 +53,10 @@ body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;backgro
   font-size:clamp(46px,8vw,130px);
   font-weight:bold;
   background:rgba(255,255,255,.18)
+}
+@keyframes faceZoom{
+  0%{transform:scale(1)}
+  100%{transform:scale(1.10)}
 }
 .name{max-width:90vw;font-size:clamp(26px,4.5vw,68px);font-weight:bold;line-height:1.05;text-shadow:0 4px 10px rgba(0,0,0,.25);overflow-wrap:anywhere}
 .department{font-size:clamp(15px,2.2vw,30px);line-height:1.1;opacity:.9}
@@ -62,7 +70,7 @@ body{font-family:Arial,Helvetica,sans-serif;color:#fff;text-align:center;backgro
 @keyframes glow{from{box-shadow:0 0 20px rgba(255,255,255,.6),0 15px 40px rgba(0,0,0,.3)}to{box-shadow:0 0 45px rgba(255,255,255,1),0 15px 40px rgba(0,0,0,.3)}}
 @keyframes floatUp{0%{transform:translateY(0) translateX(0) rotate(0);opacity:.95}50%{transform:translateY(-55vh) translateX(25px) rotate(8deg)}100%{transform:translateY(-115vh) translateX(-20px) rotate(-6deg);opacity:0}}
 @keyframes blastOut{0%{opacity:0;transform:translate(0,0) rotate(0deg) scale(.4)}8%,55%{opacity:1}100%{opacity:0;transform:translate(calc(var(--x) * var(--origin)),var(--y)) rotate(var(--r)) scale(1)}}
-@media (max-height:700px){.container{gap:2px;padding-top:10px;padding-bottom:10px}.title{font-size:clamp(24px,4.5vw,58px)}.subtitle{font-size:clamp(13px,2vw,24px)}.date{font-size:clamp(12px,1.5vw,20px)}.photo-wrap{width:min(46vw,42vh,430px);height:min(46vw,42vh,430px)}.name{font-size:clamp(22px,3.8vw,48px)}.department{font-size:clamp(13px,1.8vw,22px)}.message{font-size:clamp(12px,1.45vw,20px);padding:7px 16px}}
+@media (max-height:700px){.container{gap:2px;padding-top:10px;padding-bottom:10px}.title{font-size:clamp(24px,4.5vw,58px)}.subtitle{font-size:clamp(13px,2vw,24px)}.date{font-size:clamp(12px,1.5vw,20px)}.photo-wrap{width:min(48vw,43vh,500px);height:min(48vw,43vh,500px)}.name{font-size:clamp(22px,3.8vw,48px)}.department{font-size:clamp(13px,1.8vw,22px)}.message{font-size:clamp(12px,1.45vw,20px);padding:7px 16px}}
 @media (max-width:600px){.container{padding:70px 12px 12px;justify-content:center}.logo{top:12px;left:14px;height:32px}.photo-wrap{width:min(88vw,42vh);height:min(88vw,42vh);min-width:180px;min-height:180px}.message{max-width:94vw}.title{font-size:clamp(26px,9vw,48px)}.name{font-size:clamp(24px,8vw,44px)}}
 </style>
 </head>
@@ -175,6 +183,11 @@ function show(rec, isToday = false) {
   img.style.display = 'none';
   fb.style.display = 'flex';
   img.removeAttribute('src');
+
+  // Restart the slow zoom for every employee.
+  img.style.animation = 'none';
+  void img.offsetWidth;
+  img.style.animation = 'faceZoom 10s ease-in-out infinite alternate';
 
   let photoIndex = 0;
 
