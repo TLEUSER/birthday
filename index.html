@@ -353,7 +353,7 @@ function show(rec, isToday = false) {
 
   const img = document.getElementById('employeePhoto');
   const fb = document.getElementById('fallback');
-  fb.textContent = initials(rec.name);
+  fb.textContent = '🎂';
 
   // Automatically find the employee photo from the employee name.
   // GitHub Pages cannot list a folder, so we try predictable filename variants.
@@ -468,19 +468,7 @@ function run() {
       .sort((a,b) => Number(a.day)-Number(b.day) ||
                      String(a.name).localeCompare(String(b.name)));
 
-    // Then continue from January for a complete yearly rotation.
-    const laterYear = employees
-      .filter(r => Number(r.month) !== month &&
-                   (Number(r.month) > month || Number(r.month) < month))
-      .sort((a,b) => {
-        const am = Number(a.month), bm = Number(b.month);
-        const ad = Number(a.day), bd = Number(b.day);
-        const ak = am > month ? am : am + 12;
-        const bk = bm > month ? bm : bm + 12;
-        return ak-bk || ad-bd || String(a.name).localeCompare(String(b.name));
-      });
-
-    return [...sameMonth, ...laterYear];
+    return sameMonth;
   }
 
   function showUpcoming(list, myGeneration) {
@@ -497,11 +485,11 @@ function run() {
       }
 
       // After the full upcoming rotation, return to today's birthday
-      // for 15 minutes, if there is a birthday today.
+      // for 30 minutes, if there is a birthday today.
       const today = todayRecords();
       if (today.length) {
         show(today[0], true);
-        timer = setTimeout(startCycle, 15 * 60 * 1000);
+        timer = setTimeout(startCycle, 30 * 60 * 1000);
       } else {
         // No birthday today: restart the upcoming rotation.
         timer = setTimeout(startCycle, 1000);
@@ -518,12 +506,12 @@ function run() {
     const today = todayRecords();
 
     if (today.length) {
-      // Birthday employee stays for 15 minutes.
+      // Birthday employee stays for 30 minutes.
       show(today[0], true);
       timer = setTimeout(() => {
         if (myGeneration !== generation) return;
         showUpcoming(upcomingRecords(), myGeneration);
-      }, 15 * 60 * 1000);
+      }, 30 * 60 * 1000);
     } else {
       // No birthday today: show upcoming birthdays immediately.
       showUpcoming(upcomingRecords(), myGeneration);
