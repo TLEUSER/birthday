@@ -440,70 +440,85 @@ function show(rec, isToday = false) {
 
 function run() {
   let timer = null;
-  let currentIndex = 0;
-  const DISPLAY_TIME = 5000;
+  let generation = 0;
 
-  // Sort employees strictly by birthday:
-  // January 1 -> January 31 -> February 1 -> ... -> December 31.
-  // Employees with the same birthday are sorted by name.
-  function getDatewiseEmployees() {
-    return employees
-      .filter(r =>
-        Number(r.day) >= 1 && Number(r.day) <= 31 &&
-        Number(r.month) >= 1 && Number(r.month) <= 12
-      )
-      .slice()
-      .sort((a, b) => {
-        const monthDiff = Number(a.month) - Number(b.month);
-        if (monthDiff !== 0) return monthDiff;
-
-        const dayDiff = Number(a.day) - Number(b.day);
-        if (dayDiff !== 0) return dayDiff;
-
-        return String(a.name || '').localeCompare(
-          String(b.name || ''),
-          undefined,
-          { sensitivity: 'base' }
-        );
-      });
-  }
-
-  function startDatewiseCycle() {
+  function clearTimer() {
     if (timer) {
       clearTimeout(timer);
       timer = null;
     }
-
-    const list = getDatewiseEmployees();
-
-    if (!list.length) {
-      document.getElementById('employeeName').textContent = 'No employee data';
-      timer = setTimeout(startDatewiseCycle, DISPLAY_TIME);
-      return;
-    }
-
-    currentIndex = 0;
-
-    function showNext() {
-      const employee = list[currentIndex];
-
-      // Show employee in birthday-date order.
-      show(employee, todayMatches(employee));
-
-      currentIndex++;
-
-      // After December 31, restart at January 1.
-      if (currentIndex >= list.length) {
-        currentIndex = 0;
-      }
-
-      timer = setTimeout(showNext, DISPLAY_TIME);
-    }
-
-    showNext();
   }
 
-  startDatewiseCycle();
+  function todayRecords() {
+    const now = new Date();
+    return employees.filter(r =>
+      Number(r.day) === now.getDate() &&
+      Number(r.month) === now.getMonth() + 1
+    );
+  }
+
+  function upcomingRecords() {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+
+    // Show the rest of this month first.
+    const sameMonth = employees
+      .filter(r => Number(r.month) === month && Number(r.day) > day)
+      .sort((a,b) => Number(a.day)-Number(b.day) ||
+                     String(a.name).localeCompare(String(b.name)));
+
+    return sameMonth;
+  }
+
+  function showUpcoming(list, myGeneration) {
+    let index = 0;
+
+    function next() {
+      if (myGeneration !== generation) return;
+
+      if (index < list.length) {
+        show(list[index], false);
+        index++;
+        timer = setTimeout(next, 10000);
+        return;
+      }
+
+      // After the full upcoming rotation, return to today's birthday
+      // for 30 minutes, if there is a birthday today.
+      const today = todayRecords();
+      if (today.length) {
+        show(today[0], true);
+        timer = setTimeout(startCycle, 30 * 60 * 1000);
+      } else {
+        // No birthday today: restart the upcoming rotation.
+        timer = setTimeout(startCycle, 1000);
+      }
+    }
+
+    next();
+  }
+
+  function startCycle() {
+    clearTimer();
+    generation++;
+    const myGeneration = generation;
+    const today = todayRecords();
+
+    if (today.length) {
+      // Birthday employee stays for 30 minutes.
+      show(today[0], true);
+      timer = setTimeout(() => {
+        if (myGeneration !== generation) return;
+        showUpcoming(upcomingRecords(), myGeneration);
+      }, 30 * 60 * 1000);
+    } else {
+      // No birthday today: show upcoming birthdays immediately.
+      showUpcoming(upcomingRecords(), myGeneration);
+    }
+  }
+
+  startCycle();
 }
 
 // Start birthday display.
