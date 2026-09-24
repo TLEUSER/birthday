@@ -12,6 +12,46 @@ body{width:100vw;height:100vh}
 .screen:before{content:"";position:absolute;inset:-40%;background:linear-gradient(120deg,transparent 42%,rgba(255,255,255,.045) 50%,transparent 58%);transform:rotate(-10deg);animation:shine 10s ease-in-out infinite;pointer-events:none}
 @keyframes shine{0%,100%{transform:translateX(-8%) rotate(-10deg)}50%{transform:translateX(8%) rotate(-10deg)}}
 
+/* Soft animated background glow effect */
+.screen:after{
+    content:"";
+    position:absolute;
+    inset:-20%;
+    z-index:1;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at 20% 30%,rgba(0,220,255,.16),transparent 18%),
+        radial-gradient(circle at 80% 25%,rgba(255,60,172,.13),transparent 20%),
+        radial-gradient(circle at 50% 85%,rgba(255,209,102,.10),transparent 22%);
+    filter:blur(18px);
+    animation:ambientGlow 12s ease-in-out infinite alternate;
+}
+@keyframes ambientGlow{
+    0%{transform:scale(1) rotate(0deg);opacity:.65}
+    50%{transform:scale(1.08) rotate(2deg);opacity:1}
+    100%{transform:scale(1.02) rotate(-2deg);opacity:.72}
+}
+
+/* Floating light particles */
+.bg-particle{
+    position:absolute;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    z-index:2;
+    pointer-events:none;
+    background:rgba(255,255,255,.65);
+    box-shadow:0 0 12px rgba(255,255,255,.65);
+    animation:particleFloat linear infinite;
+}
+@keyframes particleFloat{
+    0%{transform:translate3d(0,12vh,0) scale(.65);opacity:0}
+    15%{opacity:.8}
+    50%{transform:translate3d(18px,-8vh,0) scale(1);opacity:.9}
+    85%{opacity:.45}
+    100%{transform:translate3d(-12px,-28vh,0) scale(.45);opacity:0}
+}
+
 .logo{position:absolute;top:2.8vh;left:3vw;z-index:20;color:#fff;font-weight:900;letter-spacing:2px;font-size:clamp(15px,1.8vw,30px)}
 .logo span{color:#00dcff}
 
@@ -29,7 +69,7 @@ body{width:100vw;height:100vh}
 .message{color:#dbe7f4;font-size:clamp(15px,1.7vw,26px);line-height:1.4;max-width:650px}
 .date{display:inline-block;margin-top:23px;padding:10px 24px;border-radius:30px;color:#fff;font-size:clamp(14px,1.45vw,23px);font-weight:800;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.10)}
 
-.balloon{position:absolute;width:clamp(40px,4.8vw,82px);height:clamp(52px,6.4vw,108px);border-radius:50% 50% 47% 47%;z-index:4;pointer-events:none;box-shadow:inset -12px -16px 20px rgba(0,0,0,.25),inset 9px 8px 14px rgba(255,255,255,.45),0 10px 25px rgba(0,0,0,.25);animation:float 5s ease-in-out infinite}
+.balloon{position:absolute;width:clamp(50px,5.8vw,96px);height:clamp(65px,7.7vw,126px);border-radius:50% 50% 47% 47%;z-index:4;pointer-events:none;box-shadow:inset -12px -16px 20px rgba(0,0,0,.25),inset 9px 8px 14px rgba(255,255,255,.45),0 10px 25px rgba(0,0,0,.25);animation:float 5s ease-in-out infinite}
 .balloon:after{content:"";position:absolute;top:99%;left:50%;width:1px;height:100px;background:rgba(255,255,255,.55)}
 .balloon:before{content:"";position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);width:10px;height:10px;background:inherit;clip-path:polygon(0 0,100% 0,50% 100%)}
 @keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-18px) rotate(4deg)}}
@@ -150,11 +190,266 @@ body{width:100vw;height:100vh}
     100%{opacity:0;transform:scale(1.45) rotate(18deg)}
 }
 
+
+/* NO-BIRTHDAY QUOTE SCREEN */
+.quote-screen{
+    position:absolute;
+    inset:0;
+    z-index:30;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:6vw;
+    color:#fff;
+}
+.quote-screen.show{display:flex}
+.quote-screen.show ~ .balloon,
+.quote-screen.show ~ .cracker-layer,
+.quote-screen.show ~ .cracker-blast-layer{
+    display:none!important;
+}
+.screen.quote-active .balloon,
+.screen.quote-active .cracker-layer,
+.screen.quote-active .cracker-blast-layer{
+    display:none!important;
+}
+.quote-text{
+    width:min(90vw,1500px);
+    font-size:clamp(28px,5vw,82px);
+    line-height:1.15;
+    font-weight:900;
+    letter-spacing:clamp(1px,.35vw,6px);
+    text-transform:uppercase;
+    text-shadow:0 8px 35px rgba(0,0,0,.55);
+    animation:quoteIn .8s ease;
+}
+.quote-author{
+    display:block;
+    margin-top:28px;
+    font-size:clamp(14px,1.6vw,25px);
+    line-height:1.2;
+    font-weight:500;
+    letter-spacing:1px;
+    text-transform:none;
+    text-transform:capitalize;
+    opacity:.88;
+}
+@keyframes quoteIn{
+    from{opacity:0;transform:scale(.94) translateY(18px)}
+    to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+
+/* Birthday / upcoming birthday sky fireworks */
+#birthdayFireworks{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+  display:none;
+}
+body.birthday-mode #birthdayFireworks{display:block}
+
+.firework{
+  position:absolute;
+  left:var(--x);
+  top:var(--y);
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 14px 5px #fff, 0 0 35px 12px #ffd166;
+  animation:fireworkCore 2.2s ease-out infinite;
+  animation-delay:var(--delay);
+}
+.firework::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:190px;
+  height:190px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:
+    linear-gradient(0deg,transparent 48%,#ffd166 49%,#fff 50%,#ffd166 51%,transparent 52%),
+    linear-gradient(45deg,transparent 48%,#ff7b54 49%,#fff 50%,#ff7b54 51%,transparent 52%),
+    linear-gradient(90deg,transparent 48%,#ffe066 49%,#fff 50%,#ffe066 51%,transparent 52%),
+    linear-gradient(135deg,transparent 48%,#ff6b6b 49%,#fff 50%,#ff6b6b 51%,transparent 52%);
+  opacity:0;
+  animation:fireworkRays 2.2s ease-out infinite;
+  animation-delay:var(--delay);
+}
+.firework::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:240px;
+  height:240px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 0%,#fff 0 3px,transparent 4px),
+    radial-gradient(circle at 85% 15%,#ffd166 0 3px,transparent 4px),
+    radial-gradient(circle at 100% 50%,#ff7b54 0 3px,transparent 4px),
+    radial-gradient(circle at 85% 85%,#ffe066 0 3px,transparent 4px),
+    radial-gradient(circle at 50% 100%,#fff 0 3px,transparent 4px),
+    radial-gradient(circle at 15% 85%,#ffd166 0 3px,transparent 4px),
+    radial-gradient(circle at 0% 50%,#ff7b54 0 3px,transparent 4px),
+    radial-gradient(circle at 15% 15%,#ffe066 0 3px,transparent 4px);
+  opacity:0;
+  animation:fireworkParticles 2.2s ease-out infinite;
+  animation-delay:var(--delay);
+}
+@keyframes fireworkCore{
+  0%,100%{transform:scale(.2);opacity:0}
+  10%{transform:scale(1.4);opacity:1}
+  25%{transform:scale(.9);opacity:1}
+  60%{transform:scale(.55);opacity:.7}
+  100%{transform:scale(.1);opacity:0}
+}
+@keyframes fireworkRays{
+  0%,12%{transform:translate(-50%,-50%) scale(.05);opacity:0}
+  22%{transform:translate(-50%,-50%) scale(.35);opacity:1}
+  65%{transform:translate(-50%,-50%) scale(1);opacity:.8}
+  100%{transform:translate(-50%,-50%) scale(1.25);opacity:0}
+}
+@keyframes fireworkParticles{
+  0%,15%{transform:translate(-50%,-50%) scale(.05);opacity:0}
+  25%{transform:translate(-50%,-50%) scale(.3);opacity:1}
+  70%{transform:translate(-50%,-50%) scale(1);opacity:.9}
+  100%{transform:translate(-50%,-50%) scale(1.45);opacity:0}
+}
+
+/* Continuous floating balloons: no sticks/strings, bottom -> top */
+.balloon{
+  animation:balloonFloatUp var(--balloon-duration, 12s) linear infinite;
+  animation-delay:var(--balloon-delay, 0s);
+}
+@keyframes balloonFloatUp{
+  0%{
+    transform:translate3d(0,115vh,0) rotate(-5deg);
+    opacity:0;
+  }
+  8%{opacity:.9}
+  50%{
+    transform:translate3d(var(--balloon-drift, 20px),45vh,0) rotate(5deg);
+    opacity:.95;
+  }
+  92%{opacity:.85}
+  100%{
+    transform:translate3d(calc(var(--balloon-drift, 20px) * -1),-25vh,0) rotate(-4deg);
+    opacity:0;
+  }
+}
+
+/* Continuous birthday confetti */
+#birthdayConfetti{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  overflow:hidden;
+  display:none;
+}
+body.birthday-mode #birthdayConfetti{display:block}
+
+.confetti{
+  position:absolute;
+  left:var(--cx);
+  top:-8vh;
+  width:var(--cw);
+  height:var(--ch);
+  border-radius:2px;
+  background:var(--cc);
+  opacity:.9;
+  transform:rotate(var(--cr));
+  animation:confettiFall var(--cd) linear infinite;
+  animation-delay:var(--cdelay);
+}
+@keyframes confettiFall{
+  0%{
+    transform:translate3d(0,-12vh,0) rotate(var(--cr));
+    opacity:0;
+  }
+  8%{opacity:1}
+  50%{
+    transform:translate3d(var(--sway),55vh,0) rotate(calc(var(--cr) + 180deg));
+    opacity:.95;
+  }
+  100%{
+    transform:translate3d(calc(var(--sway) * -1),115vh,0) rotate(calc(var(--cr) + 420deg));
+    opacity:0;
+  }
+}
 </style>
 </head>
 <body>
 
+<div id="birthdayConfetti" aria-hidden="true">
+  <span class="confetti" style="--cx:0%;--cw:5px;--ch:8px;--cc:#ffd166;--cd:4.5s;--cdelay:0.0s;--sway:-55px;--cr:0deg"></span>
+  <span class="confetti" style="--cx:29%;--cw:6px;--ch:9px;--cc:#ff6b6b;--cd:5.05s;--cdelay:-0.65s;--sway:-18px;--cr:47deg"></span>
+  <span class="confetti" style="--cx:58%;--cw:7px;--ch:10px;--cc:#06d6a0;--cd:5.6s;--cdelay:-1.3s;--sway:19px;--cr:94deg"></span>
+  <span class="confetti" style="--cx:87%;--cw:8px;--ch:11px;--cc:#4dabf7;--cd:6.15s;--cdelay:-1.9500000000000002s;--sway:-55px;--cr:141deg"></span>
+  <span class="confetti" style="--cx:15%;--cw:5px;--ch:12px;--cc:#c77dff;--cd:6.7s;--cdelay:-2.6s;--sway:-18px;--cr:188deg"></span>
+  <span class="confetti" style="--cx:44%;--cw:6px;--ch:8px;--cc:#ffffff;--cd:7.25s;--cdelay:-3.25s;--sway:19px;--cr:235deg"></span>
+  <span class="confetti" style="--cx:73%;--cw:7px;--ch:9px;--cc:#ffd166;--cd:7.800000000000001s;--cdelay:-3.9000000000000004s;--sway:-55px;--cr:282deg"></span>
+  <span class="confetti" style="--cx:1%;--cw:8px;--ch:10px;--cc:#ff6b6b;--cd:4.5s;--cdelay:-4.55s;--sway:-18px;--cr:329deg"></span>
+  <span class="confetti" style="--cx:30%;--cw:5px;--ch:11px;--cc:#06d6a0;--cd:5.05s;--cdelay:-5.2s;--sway:19px;--cr:16deg"></span>
+  <span class="confetti" style="--cx:59%;--cw:6px;--ch:12px;--cc:#4dabf7;--cd:5.6s;--cdelay:0.0s;--sway:-55px;--cr:63deg"></span>
+  <span class="confetti" style="--cx:88%;--cw:7px;--ch:8px;--cc:#c77dff;--cd:6.15s;--cdelay:-0.65s;--sway:-18px;--cr:110deg"></span>
+  <span class="confetti" style="--cx:16%;--cw:8px;--ch:9px;--cc:#ffffff;--cd:6.7s;--cdelay:-1.3s;--sway:19px;--cr:157deg"></span>
+  <span class="confetti" style="--cx:45%;--cw:5px;--ch:10px;--cc:#ffd166;--cd:7.25s;--cdelay:-1.9500000000000002s;--sway:-55px;--cr:204deg"></span>
+  <span class="confetti" style="--cx:74%;--cw:6px;--ch:11px;--cc:#ff6b6b;--cd:7.800000000000001s;--cdelay:-2.6s;--sway:-18px;--cr:251deg"></span>
+  <span class="confetti" style="--cx:2%;--cw:7px;--ch:12px;--cc:#06d6a0;--cd:4.5s;--cdelay:-3.25s;--sway:19px;--cr:298deg"></span>
+  <span class="confetti" style="--cx:31%;--cw:8px;--ch:8px;--cc:#4dabf7;--cd:5.05s;--cdelay:-3.9000000000000004s;--sway:-55px;--cr:345deg"></span>
+  <span class="confetti" style="--cx:60%;--cw:5px;--ch:9px;--cc:#c77dff;--cd:5.6s;--cdelay:-4.55s;--sway:-18px;--cr:32deg"></span>
+  <span class="confetti" style="--cx:89%;--cw:6px;--ch:10px;--cc:#ffffff;--cd:6.15s;--cdelay:-5.2s;--sway:19px;--cr:79deg"></span>
+  <span class="confetti" style="--cx:17%;--cw:7px;--ch:11px;--cc:#ffd166;--cd:6.7s;--cdelay:0.0s;--sway:-55px;--cr:126deg"></span>
+  <span class="confetti" style="--cx:46%;--cw:8px;--ch:12px;--cc:#ff6b6b;--cd:7.25s;--cdelay:-0.65s;--sway:-18px;--cr:173deg"></span>
+  <span class="confetti" style="--cx:75%;--cw:5px;--ch:8px;--cc:#06d6a0;--cd:7.800000000000001s;--cdelay:-1.3s;--sway:19px;--cr:220deg"></span>
+  <span class="confetti" style="--cx:3%;--cw:6px;--ch:9px;--cc:#4dabf7;--cd:4.5s;--cdelay:-1.9500000000000002s;--sway:-55px;--cr:267deg"></span>
+  <span class="confetti" style="--cx:32%;--cw:7px;--ch:10px;--cc:#c77dff;--cd:5.05s;--cdelay:-2.6s;--sway:-18px;--cr:314deg"></span>
+  <span class="confetti" style="--cx:61%;--cw:8px;--ch:11px;--cc:#ffffff;--cd:5.6s;--cdelay:-3.25s;--sway:19px;--cr:1deg"></span>
+  <span class="confetti" style="--cx:90%;--cw:5px;--ch:12px;--cc:#ffd166;--cd:6.15s;--cdelay:-3.9000000000000004s;--sway:-55px;--cr:48deg"></span>
+  <span class="confetti" style="--cx:18%;--cw:6px;--ch:8px;--cc:#ff6b6b;--cd:6.7s;--cdelay:-4.55s;--sway:-18px;--cr:95deg"></span>
+  <span class="confetti" style="--cx:47%;--cw:7px;--ch:9px;--cc:#06d6a0;--cd:7.25s;--cdelay:-5.2s;--sway:19px;--cr:142deg"></span>
+  <span class="confetti" style="--cx:76%;--cw:8px;--ch:10px;--cc:#4dabf7;--cd:7.800000000000001s;--cdelay:0.0s;--sway:-55px;--cr:189deg"></span>
+  <span class="confetti" style="--cx:4%;--cw:5px;--ch:11px;--cc:#c77dff;--cd:4.5s;--cdelay:-0.65s;--sway:-18px;--cr:236deg"></span>
+  <span class="confetti" style="--cx:33%;--cw:6px;--ch:12px;--cc:#ffffff;--cd:5.05s;--cdelay:-1.3s;--sway:19px;--cr:283deg"></span>
+  <span class="confetti" style="--cx:62%;--cw:7px;--ch:8px;--cc:#ffd166;--cd:5.6s;--cdelay:-1.9500000000000002s;--sway:-55px;--cr:330deg"></span>
+  <span class="confetti" style="--cx:91%;--cw:8px;--ch:9px;--cc:#ff6b6b;--cd:6.15s;--cdelay:-2.6s;--sway:-18px;--cr:17deg"></span>
+  <span class="confetti" style="--cx:19%;--cw:5px;--ch:10px;--cc:#06d6a0;--cd:6.7s;--cdelay:-3.25s;--sway:19px;--cr:64deg"></span>
+  <span class="confetti" style="--cx:48%;--cw:6px;--ch:11px;--cc:#4dabf7;--cd:7.25s;--cdelay:-3.9000000000000004s;--sway:-55px;--cr:111deg"></span>
+</div>
+<div id="birthdayFireworks" aria-hidden="true">
+  <span class="firework" style="--x:18%;--y:24%;--delay:0s"></span>
+  <span class="firework" style="--x:42%;--y:16%;--delay:.55s"></span>
+  <span class="firework" style="--x:68%;--y:27%;--delay:1.05s"></span>
+  <span class="firework" style="--x:84%;--y:13%;--delay:.3s"></span>
+  <span class="firework" style="--x:28%;--y:48%;--delay:1.3s"></span>
+  <span class="firework" style="--x:77%;--y:51%;--delay:.8s"></span>
+</div>
+
+
 <div class="screen" id="screen">
+    <div class="bg-particle" style="left:8%;bottom:-5%;animation-duration:9s;animation-delay:0s"></div>
+    <div class="bg-particle" style="left:18%;bottom:-8%;animation-duration:11s;animation-delay:2s"></div>
+    <div class="bg-particle" style="left:32%;bottom:-6%;animation-duration:10s;animation-delay:4s"></div>
+    <div class="bg-particle" style="left:47%;bottom:-7%;animation-duration:12s;animation-delay:1s"></div>
+    <div class="bg-particle" style="left:61%;bottom:-5%;animation-duration:9.5s;animation-delay:3s"></div>
+    <div class="bg-particle" style="left:74%;bottom:-9%;animation-duration:10.5s;animation-delay:5s"></div>
+    <div class="bg-particle" style="left:88%;bottom:-6%;animation-duration:12.5s;animation-delay:1.5s"></div>
+    <div class="quote-screen" id="quoteScreen" aria-hidden="true">
+        <div>
+            <div class="quote-text" id="quoteText"></div>
+            <div class="quote-author" id="quoteAuthor"></div>
+        </div>
+    </div>
+
     <div class="logo"><span>TLE</span> TECHNOLOGIES</div>
 
 
@@ -191,8 +486,26 @@ body{width:100vw;height:100vh}
 <script>
 const employees = [{"name":"KARTHIK B N","day":29,"month":9,"department":"ILLUSTRATION","photo":""},{"name":"RAVIKIRAN UPPALAPATI","day":26,"month":9,"department":"MANAGEMENT","photo":""},{"name":"RAJ KIRAN C","day":9,"month":10,"department":"MANAGEMENT","photo":""},{"name":"PRIYA A","day":13,"month":08,"department":"MANAGEMENT","photo":""},{"name":"DINESH CHALICHEEMALA","day":11,"month":4,"department":"EFW","photo":""},{"name":"ROHIT KUMAR","day":3,"month":8,"department":"AMM","photo":""},{"name":"TAMILSELVAN R","day":8,"month":12,"department":"ILLUSTRATION","photo":""},{"name":"RAJASEKAR R","day":21,"month":5,"department":"ILLUSTRATION","photo":""},{"name":"PRADEEP M","day":10,"month":3,"department":"ILLUSTRATION","photo":""},{"name":"BALA GOPAL REDDY AVUTHU","day":28,"month":10,"department":"EFW","photo":""},{"name":"SANKAR R","day":10,"month":12,"department":"EFW","photo":""},{"name":"SHAFNA SULTHANA P","day":10,"month":7,"department":"IPC","photo":""},{"name":"AKASH KUMAR ACHARYA","day":11,"month":9,"department":"CMM","photo":""},{"name":"RAGHU M","day":24,"month":6,"department":"FUNCTIONS","photo":""},{"name":"MANAS BORA","day":12,"month":11,"department":"ILLUSTRATION","photo":""},{"name":"VINOD KUMAR JANAPATI","day":9,"month":6,"department":"IPC","photo":""},{"name":"MANIKANTA KALLEPALLI","day":27,"month":12,"department":"AMM","photo":""},{"name":"PRASANNA T","day":7,"month":8,"department":"AMM","photo":""},{"name":"ANJU A V","day":1,"month":1,"department":"IPC","photo":""},{"name":"ALANKAR PATIL","day":2,"month":8,"department":"EFW","photo":""},{"name":"BHARGAV KUMAR G","day":20,"month":8,"department":"ILLUSTRATION","photo":""},{"name":"MOHANRAJ M","day":16,"month":10,"department":"IPC","photo":""},{"name":"RAMKAMAL S","day":2,"month":8,"department":"EFW","photo":""},{"name":"PRAKASH VARNEKARSRINGERI","day":28,"month":1,"department":"EFW","photo":""},{"name":"ATISH AJAY ACHAM","day":6,"month":5,"department":"CMM","photo":""},{"name":"NISHANT MISHRA","day":10,"month":8,"department":"AMM","photo":""},{"name":"ROHAN RAVINDRA GUNDGAL","day":30,"month":9,"department":"EFW","photo":""},{"name":"PAVAN KALYAN B V","day":15,"month":12,"department":"EFW","photo":""},{"name":"NANDHA KUMAR GOPAL","day":8,"month":1,"department":"EFW","photo":""},{"name":"RAJA L","day":27,"month":5,"department":"EFW","photo":""},{"name":"SALEEM H","day":4,"month":11,"department":"ILLUSTRATION","photo":""},{"name":"ARUN KUMAR G","day":9,"month":6,"department":"EFW","photo":""},{"name":"SHINDE SUMIT YASHWANT","day":13,"month":5,"department":"IPC","photo":""},{"name":"ACHYUT PANDURANG SIRSAT","day":9,"month":9,"department":"EFW","photo":""},{"name":"ABISHEK C","day":27,"month":3,"department":"CMM","photo":""},{"name":"BHARATHY H","day":13,"month":6,"department":"EFW","photo":""},{"name":"RAHUL KUMAR","day":5,"month":11,"department":"EFW","photo":""},{"name":"MARIA FELIX SELVA DURAI RAJA I","day":16,"month":7,"department":"AMM","photo":""},{"name":"KARTHIKEYAN J","day":20,"month":12,"department":"AMM","photo":""},{"name":"RAHUL MALVIYA","day":26,"month":6,"department":"IPC","photo":""},{"name":"SUBBARAYUDU KUNDA","day":18,"month":6,"department":"ILLUSTRATION","photo":""},{"name":"PAVITHRA M","day":21,"month":8,"department":"EFW","photo":""},{"name":"VISHNUVARTHAN D","day":4,"month":6,"department":"EFW","photo":""},{"name":"SHUBHAM DINKAR JAGTAP","day":5,"month":2,"department":"CMM","photo":""},{"name":"PUNAM BALU AVHAD","day":7,"month":4,"department":"CMM","photo":""},{"name":"YASHASHWINI G","day":13,"month":6,"department":"EFW","photo":""},{"name":"FAIZ AHMAD","day":20,"month":3,"department":"EFW","photo":""},{"name":"KAVINASH R","day":16,"month":5,"department":"CMM","photo":""},{"name":"MOHAMMED ILYAS P","day":25,"month":12,"department":"CMM","photo":""},{"name":"GAURAV KANNATH SHELKE","day":3,"month":1,"department":"AMM","photo":""},{"name":"SHITAL N JAGTAP","day":2,"month":6,"department":"AMM","photo":""},{"name":"KUNIKA MALVIYA","day":11,"month":9,"department":"AMM","photo":""},{"name":"ANAND S","day":11,"month":7,"department":"CMM","photo":""},{"name":"BHARATH JAYANTH R","day":9,"month":12,"department":"ILLUSTRATION","photo":""},{"name":"ASWIN RAJENDRAN","day":6,"month":7,"department":"ILLUSTRATION","photo":""},{"name":"MADDILA LOKESH","day":6,"month":7,"department":"CMM","photo":""},{"name":"THIRUMAL S","day":31,"month":7,"department":"EFW","photo":""},{"name":"DARSHAN K","day":3,"month":4,"department":"EFW","photo":""},{"name":"ANISHA C","day":27,"month":10,"department":"EFW","photo":""},{"name":"GOWRI VENUGOPAL","day":20,"month":6,"department":"CMM","photo":""},{"name":"POOJA R","day":19,"month":2,"department":"EFW","photo":""},{"name":"PAVITHRA K","day":19,"month":2,"department":"CMM","photo":""},{"name":"RAJKUMARAN T","day":6,"month":1,"department":"CMM","photo":""},{"name":"NITHISH KUMAR S","day":30,"month":12,"department":"CMM","photo":""},{"name":"MOHANARANGAN DEVAKUMAR","day":9,"month":11,"department":"IPC","photo":""},{"name":"ALOK BHARDWAJ H A","day":4,"month":6,"department":"IPC","photo":""},{"name":"CHANDAN L","day":21,"month":1,"department":"IPC","photo":""},{"name":"AMIT K","day":20,"month":7,"department":"IPC","photo":""},{"name":"RANJITH BABU K M","day":3,"month":2,"department":"IPC","photo":""},{"name":"SAHANA GHORPADE","day":26,"month":8,"department":"IPC","photo":""},{"name":"SANJAY H","day":7,"month":6,"department":"ILLUSTRATION","photo":""},{"name":"PAVAN KUMAR A","day":27,"month":6,"department":"ILLUSTRATION","photo":""},{"name":"SHREYANSH SINGH P","day":3,"month":6,"department":"IPC","photo":""},{"name":"CHETHANKUMAR M S","day":16,"month":8,"department":"ILLUSTRATION","photo":""},{"name":"MOHAMED TANVEER","day":19,"month":6,"department":"IPC","photo":""},{"name":"SAI BALAJI A P","day":26,"month":8,"department":"IPC","photo":""},{"name":"AMITH GOWDA M S","day":9,"month":6,"department":"IPC","photo":""},{"name":"E SAIKIRAN REDDY","day":3,"month":2,"department":"IPC","photo":""},{"name":"HARISH K","day":29,"month":7,"department":"ILLUSTRATION","photo":""},{"name":"SANTOSH MAHARANA","day":19,"month":8,"department":"","photo":""},{"name":"NAYAN KUMAR K J","day":29,"month":10,"department":"CMM","photo":""},{"name":"GIRISH M","day":27,"month":12,"department":"CMM","photo":""},{"name":"KATHIR NEDUNCHEZHIYAN","day":14,"month":5,"department":"AMM","photo":""},{"name":"ANANDAM MANOJ MOURYA","day":29,"month":4,"department":"AMM","photo":""},{"name":"HANUMANTHU H","day":15,"month":6,"department":"AMM","photo":""},{"name":"VIGNESHWAR PALANIRAJAN","day":27,"month":3,"department":"CMM","photo":""},{"name":"RAJKUMAR K","day":28,"month":11,"department":"CMM","photo":""},{"name":"NITESH KUMAR","day":22,"month":8,"department":"Quality","photo":""},{"name":"DEVIREDDY NISANTH REDDY","day":30,"month":3,"department":"CMM","photo":""},{"name":"NITIN DIXIT","day":10,"month":12,"department":"CMM","photo":""},{"name":"SARVESH SAMADHAN NIMHAN","day":6,"month":1,"department":"CMM","photo":""},{"name":"YUTHISHTRAN S","day":17,"month":5,"department":"ILLUSTRATION","photo":""},{"name":"GUDIPALLI PRABHU PRASANTH","day":26,"month":5,"department":"AMM","photo":""},{"name":"TADELU PRATAP KUMAR","day":1,"month":7,"department":"EFW","photo":""},{"name":"SRI RAGURAM S","day":8,"month":12,"department":"EFW","photo":""},{"name":"SUMEGA SREE S","day":25,"month":5,"department":"IPC","photo":""},{"name":"V ABINESH","day":11,"month":6,"department":"IPC","photo":""},{"name":"KISHAN V","day":3,"month":11,"department":"ILLUSTRATION","photo":""},{"name":"HARI HARAN K","day":14,"month":11,"department":"AMM","photo":""},{"name":"GOLDEN REJEES S","day":21,"month":5,"department":"IPC","photo":""},{"name":"K SANJAY KUMAR REDDY","day":9,"month":6,"department":"EFW","photo":""},{"name":"N RAJASEKHAR REDDY","day":20,"month":12,"department":"EFW","photo":""}];
 
-const BIRTHDAY_DISPLAY_TIME = 30 * 60 * 1000;
+const BIRTHDAY_DISPLAY_TIME = 10 * 60 * 1000;
+const QUOTE_DISPLAY_TIME = 10 * 60 * 1000;
 const UPCOMING_DISPLAY_TIME = 10 * 1000;
+const RAVIKIRAN_UPCOMING_DISPLAY_TIME = 10 * 60 * 1000;
+const DAILY_QUOTE_STORAGE_KEY = "dailyQuoteShownHistory";
+
+const quotes = [
+    {text:"SUCCESS IS THE SUM OF SMALL EFFORTS, REPEATED DAY IN AND DAY OUT.", author:"robert collier"},
+    {text:"GREAT THINGS HAPPEN WHEN WE WORK TOGETHER.", author:"unknown"},
+    {text:"BELIEVE YOU CAN, AND YOU ARE ALREADY HALFWAY THERE.", author:"theodore roosevelt"},
+    {text:"EVERY DAY IS A NEW OPPORTUNITY TO LEARN, GROW, AND SUCCEED.", author:"unknown"},
+    {text:"EXCELLENCE IS NOT AN ACT, BUT A HABIT.", author:"aristotle"},
+    {text:"KEEP MOVING FORWARD, KEEP LEARNING, AND KEEP GROWING.", author:"unknown"},
+    {text:"YOUR ATTITUDE DETERMINES YOUR DIRECTION.", author:"unknown"},
+    {text:"TEAMWORK TURNS ORDINARY EFFORT INTO EXTRAORDINARY RESULTS.", author:"unknown"},
+    {text:"DREAM BIG, WORK HARD, STAY FOCUSED, AND NEVER GIVE UP.", author:"unknown"},
+    {text:"SUCCESS BEGINS WITH THE DECISION TO TRY.", author:"unknown"},
+    {text:"MAKE TODAY COUNT AND CREATE SOMETHING GREAT.", author:"unknown"},
+    {text:"POSITIVE THINKING CREATES POSITIVE RESULTS.", author:"unknown"}
+];
 const PHOTO_ZOOM_SECONDS = 55;
 
 const monthNames = [
@@ -433,6 +746,7 @@ function autoFitScreen(){
 }
 
 async function showEmployee(employee, isTodayBirthday=false){
+    document.body.classList.add("birthday-mode");
 
     const status=document.getElementById("status");
     const name=document.getElementById("employeeName");
@@ -538,6 +852,97 @@ function getNextMonthQueue(){
 let queue=[];
 let queueIndex=0;
 let timer=null;
+let quoteHistory=[];
+
+function getNextQuote(){
+    if(!quotes.length) return null;
+
+    // Do not repeat a quotation until every quotation has been shown once.
+    let available=quotes.filter((_,index)=>!quoteHistory.includes(index));
+
+    if(!available.length){
+        quoteHistory=[];
+        available=quotes.slice();
+    }
+
+    const quote=available[Math.floor(Math.random()*available.length)];
+    const quoteIndex=quotes.indexOf(quote);
+    quoteHistory.push(quoteIndex);
+
+    return quote;
+}
+
+function showQuote(){
+    const quoteScreen=document.getElementById("quoteScreen");
+    const quoteText=document.getElementById("quoteText");
+    const quoteAuthor=document.getElementById("quoteAuthor");
+    const main=document.querySelector(".main");
+    const quote=getNextQuote();
+
+    if(!quote) return;
+
+    if(main) main.style.display="none";
+    document.getElementById("screen").classList.add("quote-active");
+    quoteScreen.classList.add("show");
+    quoteScreen.setAttribute("aria-hidden","false");
+
+    quoteText.classList.remove("quote-text");
+    void quoteText.offsetWidth;
+    quoteText.classList.add("quote-text");
+
+    quoteText.textContent=quote.text;
+    const authorName=String(quote.author||"").trim();
+    const hasKnownAuthor = authorName && authorName.toLowerCase() !== "unknown";
+    const formattedAuthor=hasKnownAuthor
+        ? authorName.charAt(0).toUpperCase()+authorName.slice(1)
+        : "";
+    quoteAuthor.textContent=hasKnownAuthor ? "— " + formattedAuthor : "";
+    quoteAuthor.style.display=hasKnownAuthor ? "block" : "none";
+
+    celebration();
+
+    timer=setTimeout(()=>{
+        quoteScreen.classList.remove("show");
+        document.getElementById("screen").classList.remove("quote-active");
+        quoteScreen.setAttribute("aria-hidden","true");
+        if(main) main.style.display="";
+        startUpcomingRotation();
+    },QUOTE_DISPLAY_TIME);
+}
+
+function startUpcomingRotation(){
+    if(timer){
+        clearTimeout(timer);
+        timer=null;
+    }
+
+    const now=new Date();
+    const currentMonth=now.getMonth()+1;
+
+    /*
+       Show only the next upcoming birthday in the current month.
+       Birthdays from other months are not shown in the upcoming rotation.
+    */
+    const upcomingThisMonth=employees
+        .filter(e =>
+            validBirthday(e) &&
+            Number(e.month)===currentMonth &&
+            Number(e.day)>now.getDate()
+        )
+        .sort((a,b)=>
+            Number(a.day)-Number(b.day) ||
+            String(a.name).localeCompare(String(b.name))
+        );
+
+    if(upcomingThisMonth.length){
+        queue=upcomingThisMonth;
+        queueIndex=0;
+        playUpcomingNext();
+    }else{
+        // No more birthdays in this month.
+        showQuote();
+    }
+}
 
 function startMonthlyRotation(){
     if(timer){
@@ -545,16 +950,61 @@ function startMonthlyRotation(){
         timer=null;
     }
 
-    queue=getMonthlyQueue();
-    queueIndex=0;
+    const now=new Date();
+    const todayBirthdays=employees
+        .filter(e =>
+            validBirthday(e) &&
+            Number(e.month)===now.getMonth()+1 &&
+            Number(e.day)===now.getDate()
+        )
+        .sort((a,b)=>String(a.name).localeCompare(String(b.name)));
 
-    if(!queue.length){
-        queue=getNextMonthQueue();
-    }
-
-    if(queue.length){
+    /*
+       If one or more birthdays are today:
+       - Show each birthday user for 10 minutes.
+       - After all today's birthdays, show the next upcoming birthday for 10 seconds.
+       - Do not show quotations while today's birthday(s) exist.
+    */
+    if(todayBirthdays.length){
+        queue=todayBirthdays;
+        queueIndex=0;
         playNext();
+        return;
     }
+
+    /*
+       No birthday today:
+       show a non-repeating quotation for 10 minutes,
+       then continue with upcoming birthdays for 10 seconds each.
+    */
+    showQuote();
+}
+
+function playUpcomingNext(){
+    if(!queue.length){
+        showQuote();
+        return;
+    }
+
+    const employee=queue[queueIndex];
+
+    /* RAVIKIRAN UPPALAPATI alone gets a 10-minute upcoming-birthday hold. */
+    showEmployee(employee, false);
+
+    const nextIndex=(queueIndex+1)%queue.length;
+    preloadPhoto(queue[nextIndex]);
+
+    timer=setTimeout(()=>{
+        queueIndex++;
+        if(queueIndex>=queue.length){
+            // After the upcoming preview cycle, return to the normal quote/upcoming flow.
+            startMonthlyRotation();
+        }else{
+            playUpcomingNext();
+        }
+    }, String(employee.name || "").trim().toUpperCase() === "RAVIKIRAN UPPALAPATI"
+        ? RAVIKIRAN_UPCOMING_DISPLAY_TIME
+        : UPCOMING_DISPLAY_TIME);
 }
 
 function playNext(){
@@ -566,7 +1016,7 @@ function playNext(){
     const employee=queue[queueIndex];
     const now=new Date();
 
-    // A user whose birthday is today stays for 30 minutes.
+    // A user whose birthday is today stays for 10 minutes.
     // Future birthdays in the current month are previewed for 10 seconds.
     const isTodayBirthday =
         Number(employee.month) === now.getMonth()+1 &&
@@ -586,7 +1036,8 @@ function playNext(){
         queueIndex++;
 
         if(queueIndex>=queue.length){
-            startMonthlyRotation();
+            // Today's birthdays are finished; show upcoming birthdays for 10 seconds.
+            startUpcomingRotation();
         }else{
             playNext();
         }
