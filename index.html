@@ -1062,63 +1062,50 @@ setInterval(()=>{
 startMonthlyRotation();
 setTimeout(autoFitScreen, 250);
 
-
 /* =========================================================
-   FIRE TV / BROWSER SCREEN-WAKE SUPPORT
-   - Requests the browser Screen Wake Lock when supported.
-   - Re-acquires it after the page becomes visible again.
-   - Does NOT change the birthday/quote rotation.
-   - Note: browser JavaScript cannot directly disable Fire TV's
-     system-level screensaver/standby if the browser/OS ignores it.
+   FIRE TV AUTO SCREEN-ON / WAKE LOCK
+   Automatically requests and re-acquires browser Screen Wake Lock.
    ========================================================= */
 let fireTvWakeLock = null;
 let fireTvWakeLockRetry = null;
 
 async function requestFireTvWakeLock(){
     if(!("wakeLock" in navigator)) return;
-
     try{
         if(fireTvWakeLock && !fireTvWakeLock.released) return;
-
         fireTvWakeLock = await navigator.wakeLock.request("screen");
-
         fireTvWakeLock.addEventListener("release",()=>{
             fireTvWakeLock = null;
             scheduleFireTvWakeLock();
         });
     }catch(e){
-        // Wake Lock can fail when the page is hidden, unsupported,
-        // or the browser/OS refuses the request.
         fireTvWakeLock = null;
+        scheduleFireTvWakeLock();
     }
 }
 
 function scheduleFireTvWakeLock(){
     clearTimeout(fireTvWakeLockRetry);
     fireTvWakeLockRetry = setTimeout(()=>{
-        if(document.visibilityState === "visible"){
-            requestFireTvWakeLock();
-        }
+        if(document.visibilityState === "visible") requestFireTvWakeLock();
     },1000);
 }
 
 document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState === "visible"){
         requestFireTvWakeLock();
+        setTimeout(tryAutoFullscreen,500);
     }
 });
-
 window.addEventListener("focus",requestFireTvWakeLock);
 window.addEventListener("pageshow",requestFireTvWakeLock);
 
 setInterval(()=>{
-    if(document.visibilityState === "visible"){
-        requestFireTvWakeLock();
-    }
+    if(document.visibilityState === "visible") requestFireTvWakeLock();
 },30000);
 
-// Initial request after the page has loaded.
-setTimeout(requestFireTvWakeLock,1500);
+setTimeout(requestFireTvWakeLock,1000);
+setTimeout(requestFireTvWakeLock,3000);
 
 /* Double-click for browser full screen. */
 document.addEventListener("dblclick",()=>{
