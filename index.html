@@ -1124,5 +1124,44 @@ window.addEventListener("load",()=>setTimeout(tryAutoFullscreen,1200),{once:true
 
 </script>
 
+<!-- Fire TV media-activity test: hidden looping video stream. -->
+<video id="fireTvActivityVideo" muted autoplay playsinline loop aria-hidden="true"
+       style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;top:-10px;"></video>
+<script>
+/* Keep a continuously playing muted video stream active. This is a test;
+   it does not guarantee that Vega Idle Manager will stay awake. */
+(function(){
+    function startFireTvActivityVideo(){
+        const video=document.getElementById("fireTvActivityVideo");
+        if(!video || !video.play) return;
+        try{
+            const canvas=document.createElement("canvas");
+            canvas.width=2; canvas.height=2;
+            const ctx=canvas.getContext("2d");
+            if(!ctx || !canvas.captureStream) return;
+            let frame=0;
+            function draw(){
+                frame++;
+                ctx.fillStyle=(frame%2) ? "#000" : "#111";
+                ctx.fillRect(0,0,2,2);
+                requestAnimationFrame(draw);
+            }
+            draw();
+            video.srcObject=canvas.captureStream(1);
+            video.muted=true;
+            video.setAttribute("muted","");
+            video.setAttribute("playsinline","");
+            const p=video.play();
+            if(p && p.catch) p.catch(()=>{});
+        }catch(e){}
+    }
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded",startFireTvActivityVideo,{once:true});
+    else startFireTvActivityVideo();
+    document.addEventListener("visibilitychange",()=>{
+        if(document.visibilityState === "visible") startFireTvActivityVideo();
+    });
+})();
+</script>
+
 </body>
 </html>
