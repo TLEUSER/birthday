@@ -385,6 +385,47 @@ body.birthday-mode #birthdayConfetti{display:block}
     opacity:0;
   }
 }
+
+/* Small TV playback control - bottom-right corner */
+.playback-controls{
+    position:absolute;
+    right:14px;
+    bottom:12px;
+    left:auto;
+    transform:none;
+    z-index:1000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2px;
+    border-radius:999px;
+    background:rgba(6,19,38,.38);
+    border:1px solid rgba(0,220,255,.16);
+    box-shadow:0 2px 10px rgba(0,0,0,.18);
+    opacity:.42;
+    transition:opacity .2s ease;
+}
+.playback-controls:hover{opacity:.9}
+.playback-btn{
+    width:24px;
+    height:20px;
+    padding:0;
+    border:0;
+    border-radius:999px;
+    background:rgba(13,49,87,.45);
+    color:rgba(210,245,255,.78);
+    font-size:10px;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.playback-btn:hover{background:rgba(13,49,87,.7);color:#fff}
+.playback-btn:focus-visible{outline:1px solid rgba(114,231,255,.65);outline-offset:1px}
+.screen.is-paused *{animation-play-state:paused!important}
+@media(max-width:700px){.playback-controls{right:8px;bottom:8px}.playback-btn{width:22px;height:19px;font-size:9px}}
+
 </style>
 </head>
 <body>
@@ -436,6 +477,10 @@ body.birthday-mode #birthdayConfetti{display:block}
 
 
 <div class="screen" id="screen">
+    <div class="playback-controls" aria-label="Birthday display controls">
+    <button id="playPauseBtn" class="playback-btn" type="button" aria-label="Pause display" title="Pause display">⏸</button>
+</div>
+
     <div class="bg-particle" style="left:8%;bottom:-5%;animation-duration:9s;animation-delay:0s"></div>
     <div class="bg-particle" style="left:18%;bottom:-8%;animation-duration:11s;animation-delay:2s"></div>
     <div class="bg-particle" style="left:32%;bottom:-6%;animation-duration:10s;animation-delay:4s"></div>
@@ -852,7 +897,80 @@ function getNextMonthQueue(){
 let queue=[];
 let queueIndex=0;
 let timer=null;
+let timerStartedAt=0;
+let timerRemaining=0;
+let isPaused=false;
 let quoteHistory=[];
+
+function clearDisplayTimer(){
+    clearDisplayTimer();
+}
+
+function startDisplayTimer(callback, duration){
+    clearDisplayTimer();
+    timerRemaining=Math.max(0, Number(duration)||0);
+    timerStartedAt=Date.now();
+    timer=setTimeout(()=>{
+        timer=null;
+        timerRemaining=0;
+        callback();
+    }, timerRemaining);
+}
+
+function pauseDisplay(){
+    if(isPaused) return;
+    isPaused=true;
+
+    if(timer){
+        const elapsed=Date.now()-timerStartedAt;
+        timerRemaining=Math.max(0, timerRemaining-elapsed);
+        clearDisplayTimer();
+    }
+
+    document.getElementById("screen")?.classList.add("is-paused");
+    const btn=document.getElementById("playPauseBtn");
+    if(btn){
+        btn.textContent="▶";
+        btn.setAttribute("aria-label","Play display");
+        btn.title="Play display";
+    }
+}
+
+function resumeDisplay(){
+    if(!isPaused) return;
+    isPaused=false;
+    document.getElementById("screen")?.classList.remove("is-paused");
+
+    const btn=document.getElementById("playPauseBtn");
+    if(btn){
+        btn.textContent="⏸";
+        btn.setAttribute("aria-label","Pause display");
+        btn.title="Pause display";
+    }
+
+    if(timerRemaining>0){
+        timerStartedAt=Date.now();
+        timer=setTimeout(()=>{
+            timer=null;
+            timerRemaining=0;
+            advanceAfterPause();
+        },timerRemaining);
+    }
+}
+
+let pausedCallback=null;
+function setPauseAwareTimer(callback,duration){
+    pausedCallback=callback;
+    startDisplayTimer(()=>{
+        pausedCallback=null;
+        callback();
+    },duration);
+}
+function advanceAfterPause(){
+    const cb=pausedCallback;
+    pausedCallback=null;
+    if(cb) cb();
+}
 
 function getNextQuote(){
     if(!quotes.length) return null;
@@ -901,7 +1019,7 @@ function showQuote(){
 
     celebration();
 
-    timer=setTimeout(()=>{
+    setPauseAwareTimer(()=>{
         quoteScreen.classList.remove("show");
         document.getElementById("screen").classList.remove("quote-active");
         quoteScreen.setAttribute("aria-hidden","true");
@@ -911,10 +1029,7 @@ function showQuote(){
 }
 
 function startUpcomingRotation(){
-    if(timer){
-        clearTimeout(timer);
-        timer=null;
-    }
+    clearDisplayTimer();
 
     const now=new Date();
     const currentMonth=now.getMonth()+1;
@@ -945,10 +1060,7 @@ function startUpcomingRotation(){
 }
 
 function startMonthlyRotation(){
-    if(timer){
-        clearTimeout(timer);
-        timer=null;
-    }
+    clearDisplayTimer();
 
     const now=new Date();
     const todayBirthdays=employees
@@ -994,7 +1106,7 @@ function playUpcomingNext(){
     const nextIndex=(queueIndex+1)%queue.length;
     preloadPhoto(queue[nextIndex]);
 
-    timer=setTimeout(()=>{
+    setPauseAwareTimer(()=>{
         queueIndex++;
         if(queueIndex>=queue.length){
             // After the upcoming preview cycle, return to the normal quote/upcoming flow.
@@ -1032,7 +1144,7 @@ function playNext(){
         ? BIRTHDAY_DISPLAY_TIME
         : UPCOMING_DISPLAY_TIME;
 
-    timer=setTimeout(()=>{
+    setPauseAwareTimer(()=>{
         queueIndex++;
 
         if(queueIndex>=queue.length){
@@ -1044,6 +1156,14 @@ function playNext(){
     },holdTime);
 }
 
+const playPauseBtn=document.getElementById("playPauseBtn");
+if(playPauseBtn){
+    playPauseBtn.addEventListener("click",()=>{
+        if(isPaused) resumeDisplay();
+        else pauseDisplay();
+    });
+}
+
 /* Check the date every 30 seconds. */
 let lastDate=new Date().toDateString();
 
@@ -1053,7 +1173,7 @@ setInterval(()=>{
 
     if(today!==lastDate){
         lastDate=today;
-        startMonthlyRotation();
+        if(!isPaused) startMonthlyRotation();
     }
 
 },30000);
@@ -1122,45 +1242,6 @@ function tryAutoFullscreen(){
 }
 window.addEventListener("load",()=>setTimeout(tryAutoFullscreen,1200),{once:true});
 
-</script>
-
-<!-- Fire TV media-activity test: hidden looping video stream. -->
-<video id="fireTvActivityVideo" muted autoplay playsinline loop aria-hidden="true"
-       style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;top:-10px;"></video>
-<script>
-/* Keep a continuously playing muted video stream active. This is a test;
-   it does not guarantee that Vega Idle Manager will stay awake. */
-(function(){
-    function startFireTvActivityVideo(){
-        const video=document.getElementById("fireTvActivityVideo");
-        if(!video || !video.play) return;
-        try{
-            const canvas=document.createElement("canvas");
-            canvas.width=2; canvas.height=2;
-            const ctx=canvas.getContext("2d");
-            if(!ctx || !canvas.captureStream) return;
-            let frame=0;
-            function draw(){
-                frame++;
-                ctx.fillStyle=(frame%2) ? "#000" : "#111";
-                ctx.fillRect(0,0,2,2);
-                requestAnimationFrame(draw);
-            }
-            draw();
-            video.srcObject=canvas.captureStream(1);
-            video.muted=true;
-            video.setAttribute("muted","");
-            video.setAttribute("playsinline","");
-            const p=video.play();
-            if(p && p.catch) p.catch(()=>{});
-        }catch(e){}
-    }
-    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded",startFireTvActivityVideo,{once:true});
-    else startFireTvActivityVideo();
-    document.addEventListener("visibilitychange",()=>{
-        if(document.visibilityState === "visible") startFireTvActivityVideo();
-    });
-})();
 </script>
 
 </body>
